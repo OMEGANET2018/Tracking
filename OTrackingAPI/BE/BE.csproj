@@ -46,6 +46,9 @@
     <Compile Include="Comun\ComponenteCampo.cs" />
     <Compile Include="Comun\ComponenteDiagnostico.cs" />
     <Compile Include="Comun\Diagnostico.cs" />
+    <Compile Include="Comun\Menu.cs" />
+    <Compile Include="Comun\Parametro.cs" />
+    <Compile Include="Comun\Perfil.cs" />
     <Compile Include="Comun\Persona.cs" />
     <Compile Include="Comun\Servicio.cs" />
     <Compile Include="Comun\ServicioComponente.cs" />
