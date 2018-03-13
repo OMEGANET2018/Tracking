@@ -1,0 +1,6 @@
+F:\Proyectos\Backoffice\ObackOfficeAPI\BE\bin\Release\BE.dll
+F:\Proyectos\Backoffice\ObackOfficeAPI\BE\bin\Release\BE.pdb
+F:\Proyectos\Backoffice\ObackOfficeAPI\BE\obj\Release\BE.csproj.CoreCompileInputs.cache
+F:\Proyectos\Backoffice\ObackOfficeAPI\BE\obj\Release\BE.dll
+F:\Proyectos\Backoffice\ObackOfficeAPI\BE\obj\Release\BE.pdb
+F:\Proyectos\Backoffice\ObackOfficeAPI\BE\obj\Release\BE.csprojResolveAssemblyReference.cache
