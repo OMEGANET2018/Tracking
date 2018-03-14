@@ -1,17 +1,17 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BE.Comun
+namespace BE.Administracion
 {
-    [Table("tblServicio")]
-    public class Servicio
+    [Table("tblComponente")]
+    public class Componente
     {
         public int Id { get; set; }
-        public int ColaboradorId { get; set; }
-        public DateTime? FechaExamen { get; set; }
-        public int TipoExamenId { get; set; }
-        public int? AptitudId { get; set; }
-        public int? ProoveedorId { get; set; }
+        public string Nombre { get; set; }
+        public int PadreId { get; set; }
+        public int? TipoValorId { get; set; }
+        public int? ValorMinimo { get; set; }
+        public int? ValorMaximo { get; set; }
         public int EsEliminado { get; set; }
         public int? UsuGraba { get; set; }
         public DateTime? FechaGraba { get; set; }

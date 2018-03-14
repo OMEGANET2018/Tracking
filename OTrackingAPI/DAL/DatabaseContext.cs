@@ -1,4 +1,7 @@
 ﻿using BE.Comun;
+using BE.Acceso;
+using BE.Persona;
+using BE.Administracion;
 using System.Data.Entity;
 
 namespace DAL

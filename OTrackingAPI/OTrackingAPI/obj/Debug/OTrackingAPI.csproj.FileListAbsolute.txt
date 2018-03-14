@@ -54,3 +54,11 @@ F:\Proyectos\Tracking\OTrackingAPI\OTrackingAPI\obj\Debug\OTrackingAPI.csprojRes
 F:\Proyectos\Tracking\OTrackingAPI\OTrackingAPI\obj\Debug\OTrackingAPI.csproj.CoreCompileInputs.cache
 F:\Proyectos\Tracking\OTrackingAPI\OTrackingAPI\obj\Debug\OTrackingAPI.dll
 F:\Proyectos\Tracking\OTrackingAPI\OTrackingAPI\obj\Debug\OTrackingAPI.pdb
+F:\Proyectos\Tracking\OTrackingAPI\OTrackingAPI\bin\NPOI.dll
+F:\Proyectos\Tracking\OTrackingAPI\OTrackingAPI\bin\NPOI.OOXML.dll
+F:\Proyectos\Tracking\OTrackingAPI\OTrackingAPI\bin\ICSharpCode.SharpZipLib.dll
+F:\Proyectos\Tracking\OTrackingAPI\OTrackingAPI\bin\NPOI.OpenXmlFormats.dll
+F:\Proyectos\Tracking\OTrackingAPI\OTrackingAPI\bin\NPOI.OpenXml4Net.dll
+F:\Proyectos\Tracking\OTrackingAPI\OTrackingAPI\bin\NPOI.xml
+F:\Proyectos\Tracking\OTrackingAPI\OTrackingAPI\bin\EntityFramework.SqlServer.dll
+F:\Proyectos\Tracking\OTrackingAPI\OTrackingAPI\bin\EntityFramework.SqlServer.xml

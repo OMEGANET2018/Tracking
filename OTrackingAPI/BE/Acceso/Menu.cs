@@ -1,17 +1,16 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BE.Comun
+namespace BE.Acceso
 {
-    [Table("tblComponente")]
-    public class Componente
+    [Table("tblMenu")]
+    public class Menu
     {
         public int Id { get; set; }
-        public string Nombre { get; set; }
-        public int PadreId { get; set; }
-        public int? TipoValorId { get; set; }
-        public int? ValorMinimo { get; set; }
-        public int? ValorMaximo { get; set; }
+        public string Descripcion { get; set; }
+        public int? PadreId { get; set; }
+        public string Icono { get; set; }
+        public string Uri { get; set; }
         public int EsEliminado { get; set; }
         public int? UsuGraba { get; set; }
         public DateTime? FechaGraba { get; set; }

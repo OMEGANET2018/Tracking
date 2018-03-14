@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BE.Comun
+namespace BE.Administracion
 {
     [Table("tblDiagnostico")]
     public class Diagnostico

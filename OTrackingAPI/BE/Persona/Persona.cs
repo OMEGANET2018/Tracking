@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BE.Comun
+namespace BE.Persona
 {
     [Table("tblPersona")]
     public class Persona
