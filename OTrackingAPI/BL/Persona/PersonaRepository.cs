@@ -1,5 +1,4 @@
 ﻿using DAL;
-using BE;
 using BE.Persona;
 using BE.Comun;
 using System;
@@ -9,7 +8,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Globalization;
 
-namespace BL
+namespace BL.Persona
 {
    
     public class PersonaRepository
