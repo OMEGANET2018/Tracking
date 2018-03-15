@@ -9,3 +9,9 @@ F:\Proyectos\Tracking\OTrackingAPI\BE\obj\Debug\BE.csprojResolveAssemblyReferenc
 F:\Proyectos\Tracking\OTrackingAPI\BE\obj\Debug\BE.csproj.CoreCompileInputs.cache
 F:\Proyectos\Tracking\OTrackingAPI\BE\obj\Debug\BE.dll
 F:\Proyectos\Tracking\OTrackingAPI\BE\obj\Debug\BE.pdb
+E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\BE\bin\Debug\BE.dll
+E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\BE\bin\Debug\BE.pdb
+E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\BE\obj\Debug\BE.csprojResolveAssemblyReference.cache
+E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\BE\obj\Debug\BE.csproj.CoreCompileInputs.cache
+E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\BE\obj\Debug\BE.dll
+E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\BE\obj\Debug\BE.pdb

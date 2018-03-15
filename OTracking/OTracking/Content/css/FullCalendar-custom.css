@@ -1,0 +1,15 @@
+﻿.calendar-custom .fc-toolbar h2 {
+    color: #ED9507;
+    font-size: 19px;
+    text-transform: uppercase;
+}
+
+.calendar-custom .fc-content .fc-title {
+    color: #fff;
+    font-size:12px;
+    text-align:center;
+}
+
+.calendar-custom .fc-event-container {
+    text-align: center;
+}

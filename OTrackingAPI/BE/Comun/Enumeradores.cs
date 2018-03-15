@@ -2,10 +2,17 @@
 {
     public class Enumeradores
     {
+        public enum GrupoParametros
+        {
+            Roles = 100,
+            TipoEmpresas = 110,
+        }
+
+
         public enum EsEliminado
         {
-            NO = 0,
-            SI = 1
+            No = 0,
+            Si = 1
         }
 
         public enum RecordStatus

@@ -6,7 +6,7 @@ namespace BE.Acceso
     [Table("tblMenu")]
     public class Menu
     {
-        public int Id { get; set; }
+        public int MenuId { get; set; }
         public string Descripcion { get; set; }
         public int? PadreId { get; set; }
         public string Icono { get; set; }

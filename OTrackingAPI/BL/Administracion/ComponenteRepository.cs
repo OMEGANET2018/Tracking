@@ -15,7 +15,7 @@ namespace BL.Administracion
         {
             try
             {
-                int NoEsEliminado = (int)Enumeradores.EsEliminado.NO;
+                int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
                 int RecordStatusGrabado = (int)Enumeradores.RecordStatus.Grabado;
 
                 var ListaComponentes = (from a in ctx.Componentes
@@ -83,7 +83,7 @@ namespace BL.Administracion
         {
             try
             {
-                int NoEsEliminado = (int)Enumeradores.EsEliminado.NO;
+                int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
 
                 Componente Padre = new Componente()
                 {
@@ -130,7 +130,7 @@ namespace BL.Administracion
         {
             try
             {
-                int EsEliminado = (int)Enumeradores.EsEliminado.SI;
+                int EsEliminado = (int)Enumeradores.EsEliminado.Si;
 
                 var ComponentePadre = (from a in ctx.Componentes where a.Id == data.Id select a).FirstOrDefault();
 
@@ -164,8 +164,8 @@ namespace BL.Administracion
         {
             try
             {
-                int EsEliminado = (int)Enumeradores.EsEliminado.SI;
-                int NoEsEliminado = (int)Enumeradores.EsEliminado.NO;
+                int EsEliminado = (int)Enumeradores.EsEliminado.Si;
+                int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
                 ctx.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted);
 
                 var Padre = (from a in ctx.Componentes where a.Id == data.Id select a).FirstOrDefault();

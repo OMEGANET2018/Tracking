@@ -8,7 +8,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Globalization;
 
-namespace BL.Persona
+namespace BL.Personas
 {
    
     public class PersonaRepository
@@ -19,7 +19,7 @@ namespace BL.Persona
         {
             try
             {
-                int NoEsEliminado = (int)Enumeradores.EsEliminado.NO;
+                int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
                 int RegistrosInsertados = 0;
                 int RegistrosErrados = 0;
 
@@ -96,10 +96,10 @@ namespace BL.Persona
                                 DiscapacitadoId = Row.GetCell(27) != null ? (int?)Row.GetCell(27).NumericCellValue : null,
                                 FechaGraba = DateTime.UtcNow,
                                 EsEliminado = NoEsEliminado,
-                                PersonaId = Persona.Id
+                                PersonaId = Persona.PersonaId
                             };
 
-                            Colaborador Colaborador = (from a in ctx.Colaboradores where a.PersonaId == Persona.Id && a.EsEliminado == NoEsEliminado select a).FirstOrDefault();
+                            Colaborador Colaborador = (from a in ctx.Colaboradores where a.PersonaId == Persona.PersonaId && a.EsEliminado == NoEsEliminado select a).FirstOrDefault();
 
                             if(Colaborador == null)
                             {

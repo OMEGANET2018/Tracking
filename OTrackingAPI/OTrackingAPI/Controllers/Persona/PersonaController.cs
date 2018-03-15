@@ -1,4 +1,4 @@
-﻿using BL.Persona;
+﻿using BL.Personas;
 using System.IO;
 using System.Web.Http;
 using Newtonsoft.Json;

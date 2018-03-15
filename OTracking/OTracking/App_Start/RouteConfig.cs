@@ -14,6 +14,12 @@ namespace OTracking
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+               "General_login", "ingresar/",
+               new { controller = "Generals", action = "Login" },
+               new[] { "OTracking.Controllers" }
+           );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

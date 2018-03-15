@@ -21,5 +21,6 @@ namespace DAL
         public DbSet<Menu> Menus { get; set; }
         public DbSet<Perfil> Perfiles { get; set; }
         public DbSet<Parametro> Parametros { get; set; }
+        public DbSet<Empresa> Empresas { get; set; }
     }
 }
