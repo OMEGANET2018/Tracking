@@ -8,7 +8,7 @@ using System.Configuration;
 using Newtonsoft.Json;
 using System.Globalization;
 
-namespace ObackOffice.Models
+namespace OTracking.Models
 {
     enum HttpVerb
     {

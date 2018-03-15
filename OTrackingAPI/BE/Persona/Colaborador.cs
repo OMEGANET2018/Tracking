@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BE.Comun
+namespace BE.Persona
 {
     [Table("tblColaborador")]
     public class Colaborador
@@ -11,6 +11,7 @@ namespace BE.Comun
         public int? SedeId { get; set; }
         public string Direccion { get; set; }
         public DateTime? FechaIngreso { get; set; }
+        public int? GradoInstruccionId { get; set; }
         public string PuestoLaboral { get; set; }
         public string Area { get; set; }
         public int? DiscapacitadoId { get; set; }

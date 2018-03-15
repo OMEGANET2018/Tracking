@@ -1,4 +1,7 @@
 ﻿using BE.Comun;
+using BE.Acceso;
+using BE.Persona;
+using BE.Administracion;
 using System.Data.Entity;
 
 namespace DAL
@@ -15,5 +18,8 @@ namespace DAL
         public DbSet<ComponenteDiagnostico> ComponenteDiagnosticos { get; set; }
         public DbSet<ServicioComponente> ServicioComponentes { get; set; }
         public DbSet<ComponenteCampo> ComponenteCampos { get; set; }
+        public DbSet<Menu> Menus { get; set; }
+        public DbSet<Perfil> Perfiles { get; set; }
+        public DbSet<Parametro> Parametros { get; set; }
     }
 }
