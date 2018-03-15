@@ -6,7 +6,7 @@ namespace BE.Acceso
     [Table("tblPerfil")]
     public class Perfil
     {
-        public int Id { get; set; }
+        public int PerfilId { get; set; }
         public int RolId { get; set; }
         public int MenuId { get; set; }
         public int EsEliminado { get; set; }

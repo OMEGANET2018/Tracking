@@ -19,6 +19,7 @@ namespace BE
             return Convert.ToBase64String(_encrypt);
         }
         #endregion
+
         #region Mail
         public static bool SendSimpleMail(string body, string subject, List<string> adresses, string SystemAdress, string SystemAdressPassword, string SMTPHost, string MailDisplayName = "Sistema")
         {
