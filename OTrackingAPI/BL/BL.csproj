@@ -69,7 +69,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PersonaRepository.cs" />
+    <Compile Include="Administracion\ComponenteRepository.cs" />
+    <Compile Include="Persona\PersonaRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

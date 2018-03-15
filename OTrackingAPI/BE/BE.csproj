@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Comun\Bandejas.cs" />
     <Compile Include="Comun\Enumeradores.cs" />
     <Compile Include="Persona\Colaborador.cs" />
     <Compile Include="Administracion\Componente.cs" />
