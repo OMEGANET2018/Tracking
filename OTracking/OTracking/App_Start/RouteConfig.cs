@@ -20,10 +20,46 @@ namespace OTracking
            );
 
             routes.MapRoute(
-                name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+               "General_logout", "salir/",
+               new { controller = "Generals", action = "Logout" },
+               new[] { "OTracking.Controllers" }
+           );
+
+            routes.MapRoute(
+              "General_notauthorized",
+              "notauthorized/",
+              new { controller = "Generals", action = "Notauthorized" },
+              new[] { "OTracking.Controllers" }
             );
+
+            routes.MapRoute(
+             "General_sessionexpired",
+             "adios/",
+             new { controller = "Generals", action = "SessionExpired" },
+             new[] { "OTracking.Controllers" }
+            );
+
+
+            routes.MapRoute(
+                 "tracking", "Tracking/",
+                 new { controller = "Generals", action = "Home" },
+                 new[] { "OTracking.Controllers" }
+             );
+
+
+            routes.MapRoute(
+               "404",
+               "404/",
+               new { controller = "Generals", action = "NoFound" },
+               new[] { "OTracking.Controllers" }
+            );
+
+            routes.MapRoute(
+              name: "Default",
+              url: "{controller}/{action}/{id}",
+              defaults: new { controller = "Generals", action = "Index", id = UrlParameter.Optional }
+          );
+
         }
     }
 }

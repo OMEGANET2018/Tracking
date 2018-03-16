@@ -1,4 +1,6 @@
-﻿using OTracking.Models;
+﻿using OTracking.Controllers.Seguridad;
+using OTracking.Models;
+using OTracking.Models.Acceso;
 using OTracking.Utils;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,12 @@ namespace OTracking.Controllers
             return RedirectToRoute("General_login");
         }
 
+        [GeneralSecurity(Rol = "")]
+        public ActionResult Home()
+        {
+            return View("~/Views/Generals/Index.cshtml", ViewBag.MENU);
+        }
+
         public ActionResult Login()
         {
             if (TempData["MESSAGE"] != null)
@@ -31,30 +39,37 @@ namespace OTracking.Controllers
                 collection = (FormCollection)TempData["FormCollection"];
 
             if (ValidarCamposVacios(collection))
-                ValidarAccesoUsuario(collection);           
+            {
+                if (ValidarAccesoUsuario(collection))
+                    return RedirectToRoute("tracking");
+                else
+                    return RedirectToRoute("General_Login");
+            }               
             else
+            {
                 TempData["MESSAGE"] = "Debe ingresar el usuario y/o la contraseña";
-        
-            return RedirectToRoute("General_Login");
+                return RedirectToRoute("General_Login");
+            }
+                
         }
 
-        private void ValidarAccesoUsuario(FormCollection collection)
+        private bool ValidarAccesoUsuario(FormCollection collection)
         {
             TempData["FormCollection"] = null;
 
             Api API = new Api();
-            ViewBag.USUARIO = API.Get<Models.Acceso.UsuarioLogin>(relativePath: "Usuario/GetUsuario", args: Argumentos(collection));
-            if (ViewBag.USUARIO != null)
+            var usuarioLogeado = API.Get<UsuarioLogin>(relativePath: "Usuario/GetUsuario", args: Argumentos(collection));
+            if (usuarioLogeado != null)
             {
-                Session.Add("AutBackoffice", PoblarClientSession(ViewBag.USUARIO));
-                RedirectToRoute("backoffice");
+                Session.Add("AutBackoffice", PoblarClientSession(usuarioLogeado));
+                return true;
             }
             else
             {
                 TempData["MESSAGE"] = "Usuario o contraseña incorrectos";
-                RedirectToRoute("General_Login");
+                return false;
             }
-        }       
+        }        
 
         private bool ValidarCamposVacios(FormCollection collection)
         {
