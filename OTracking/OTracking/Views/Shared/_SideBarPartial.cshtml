@@ -1,0 +1,37 @@
+﻿@{
+    var base64 = @ViewBag.USUARIO.foto == null ? "" : Convert.ToBase64String(@ViewBag.USUARIO.foto);
+    var imgSrc = base64 != "" ? String.Format("data:image/jpeg;base64,{0}", base64) : "/Content/static/images/foto@default.png";
+}
+<div id="sidebar-wrapper" class="barra-lateral">
+    <div class="datos-usuario d-flex justify-content-around align-items-center">
+        <img src="@imgSrc" />
+        @*<a href="#">(@ViewBag.USUARIO.Rol)  @ViewBag.USUARIO.NombreCompleto</a>*@
+        <a href="#" class="nombre-usuario dropdown-toggle" data-toggle="dropdown">(@ViewBag.USUARIO.Rol) @ViewBag.USUARIO.NombreCompleto</a>
+        <ul class="dropdown-menu">
+            <li class="user-header ">
+                <div class="text-center">
+                    <a href="@Url.Content("~/salir")" class="btn btn-danger">Salir</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <nav class="menu d-flex d-sm-block">
+        <ul>
+            @foreach (var menu in ViewBag.USUARIO.Autorizacion)
+            {
+                <li class="submenu">
+                    <a href="#"><i class="@menu.Icono"></i><span>@menu.Descripcion<span class="caret icon-down-dir"></span></span></a>
+                    <ul class="children">
+                        @foreach (var submenu in menu.SubMenus)
+                        {
+                            <li><a href="@Url.Content("~/")@submenu.Uri"><i class="@submenu.Icono"></i>@submenu.Descripcion</a></li>
+                        }
+                    </ul>
+                </li>
+            }
+            <li>
+                <a href="@Url.Content("~/salir")"><i class="icon-logout"></i><span>Salir del Sistema</span></a>
+            </li>
+        </ul>
+    </nav>
+</div>

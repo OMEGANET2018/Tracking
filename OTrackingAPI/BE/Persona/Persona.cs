@@ -16,7 +16,7 @@ namespace BE.Persona
         public DateTime? FechaNacimiento { get; set; }
         public string Correo { get; set; }
         public string Telefono { get; set; }
-        public byte?[] Foto { get; set; }
+        public byte[] Foto { get; set; }
         public string LugarNacimiento { get; set; }
         public int? EstadoCivilId { get; set; }
         public int EsEliminado { get; set; }
