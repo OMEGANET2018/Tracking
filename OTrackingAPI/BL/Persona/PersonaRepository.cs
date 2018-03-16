@@ -96,7 +96,9 @@ namespace BL.Personas
                                 DiscapacitadoId = Row.GetCell(27) != null ? (int?)Row.GetCell(27).NumericCellValue : null,
                                 FechaGraba = DateTime.UtcNow,
                                 EsEliminado = NoEsEliminado,
-                                PersonaId = Persona.PersonaId
+                                PersonaId = Persona.PersonaId,
+                                ZonaId = Row.GetCell(29) != null ? (int?)Row.GetCell(29).NumericCellValue : null,
+                                LugarDeTrabajo = Row.GetCell(30) != null ? Row.GetCell(30).ToString() : ""
                             };
 
                             Colaborador Colaborador = (from a in ctx.Colaboradores where a.PersonaId == Persona.PersonaId && a.EsEliminado == NoEsEliminado select a).FirstOrDefault();

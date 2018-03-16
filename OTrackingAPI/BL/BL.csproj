@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Administracion\ComponenteRepository.cs" />
+    <Compile Include="Administracion\EMORepository.cs" />
     <Compile Include="Persona\PersonaRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Acceso\UsuarioRepositorio.cs" />

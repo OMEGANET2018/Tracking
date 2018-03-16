@@ -44,6 +44,7 @@
     <Compile Include="Administracion\Empresa.cs" />
     <Compile Include="Comun\Bandejas.cs" />
     <Compile Include="Comun\Enumeradores.cs" />
+    <Compile Include="Comun\MultiDataModel.cs" />
     <Compile Include="Persona\Colaborador.cs" />
     <Compile Include="Administracion\Componente.cs" />
     <Compile Include="Administracion\ComponenteCampo.cs" />
