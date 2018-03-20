@@ -1,0 +1,231 @@
+﻿<style>
+    #Loading {
+        background-color: rgba(0, 0, 0, 0.60);
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        z-index: 9999;
+    }
+
+        #Loading > img {
+            width: 200px;
+        }
+
+    .pagination-active span {
+        color: #f39c12 !important;
+    }
+
+    #myModal table{
+        margin-top:20px;
+    }
+
+    #myModal table thead tr{
+        background-color:black;
+        color:white;
+        font-weight:bolder;
+        text-align:center;
+    }
+
+    #myModal table tbody tr td{
+        text-align:center !important;
+    }
+
+    #myModal table thead tr th:first-child{
+        border-bottom-left-radius:10px;
+        border-top-left-radius:10px;
+    }
+
+    #myModal table thead tr th:last-child {
+        border-bottom-right-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+</style>
+<div class="container-fluid">
+    <div class="box box-default mt-2" id="acordion">
+        <div class="box-header with-border" id="heading1">
+            <h3 class="box-title" style="cursor:pointer;"><i class="icon-cogs"></i> Listado de Componentes</h3>
+        </div>
+        <div id="RenderBandejaComponentes">
+            @Html.Partial("_BandejaComponentesPartial")
+        </div>
+    </div>
+
+    <nav class="d-flex justify-content-end align-items-center flex-wrap">
+        <div>
+            <button class="btn-warning boton form-control" onclick="NuevoComponente()" style="cursor:pointer;margin-bottom:20px;">
+                <i class="fa fa-search"></i> Nuevo Componente
+            </button>
+        </div>
+    </nav>
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3" role="dialog" style="width:100%;">
+    <div class="modal-dialog" style="max-width:100000px;">
+        <form>
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal" style="outline:none;">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-8">
+                            <label>Nombre</label>
+                            <input id="padre-valor" type="text" data-validation="length" data-validation-length="3-50" data-validation-error-msg="El Nombre debe de tener entre 3 y 50 caracteres"/>
+                        </div>
+                        <div class="col-4">
+                            <button type="button" class="btn-warning boton form-control" style="cursor:pointer;" onclick="AgregarHijo()">Agregar Campo</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <table style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Tipo Valor</th>
+                                        <th>Minimo</th>
+                                        <th>Maximo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="tr-eliminar"><td colspan="4" class="text-center">No hay campos agregados</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn-warning boton form-control" style="cursor:pointer;">Guardar</button>
+                    <button type="button" class="btn-warning boton form-control" style="cursor:pointer;" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="hijo-base" style="display:none">
+    <table>
+        <tbody>
+            <tr id="campo-base">
+                <td><input type="text" id="campo-nombre" /></td>
+                <td><select id="campo-valor">
+                    @foreach (var item in ViewBag.TipoValores)
+                    {
+                        <option value="@item.Id">@item.Value</option>
+                    }
+                    </select></td>
+                <td><input type="number" id="campo-minimo" /></td>
+                <td><input type="number" id="campo-maximo" /></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="alert" role="alert" style="display:none;">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+    <span></span>
+</div>
+
+<div id="Loading" style="display:none;">
+    <img src="~/Content/Images/loading.gif" />
+</div>
+
+
+@section scripts{
+    <script src="~/Scripts/JqueryFormValidate.js"></script>
+    <script src="~/Scripts/FormValidateSecurity.js"></script>
+    <link href="~/Content/Themes/FormValidatorTheme.css" rel="stylesheet" type="text/css" />
+
+    <script>
+        $.validate()
+
+        $('form').submit(function (event) {
+
+            event.preventDefault();
+
+            alert("Enviandoooo");
+        });
+
+        function NuevoComponente() {
+            $("#myModal").modal();
+            $("#myModal .modal-title").html("Nuevo Componente");
+            $("#padre-valor").val("").trigger("reset")
+        }
+
+        function AgregarHijo() {
+            if ($("#tr-eliminar").length > 0)
+                $("#tr-eliminar").remove();
+
+            $("#myModal table tbody").append($("#hijo-base tbody").html());
+        }
+
+        //function DeleteUser(id) {
+        //    var width = $(window).width();
+        //    var height = $(window).height();
+        //    $("#Loading").show().css("width", width + "px").css("height", height + "px");
+        //    $("#Loading > img").css("margin-left", ((width - 200) / 2) + "px").css("margin-top", ((height - 266) / 2) + "px");
+
+        //    $.ajax({
+        //        cache: false,
+        //        dataType: 'json',
+        //        method: 'POST',
+        //        data: { id: id },
+        //        url: '/Acceso/DeleteUser',
+        //        success: function (json) {
+        //            $("#Loading").hide();
+        //            if (json) {
+        //                alerta("Usuario eliminado!", "verde");
+        //                FiltrarUsuarios(1);
+        //            } else {
+        //                alerta("No se pudo eliminar el usuario", "rojo");
+        //            }
+        //        },
+        //        error: function (error) {
+        //            alerta("Sucedió un error al conectarse al servidor", "rojo");
+        //            $("#Loading").hide();
+        //            console.log(error);
+        //        }
+        //    });
+        //}
+
+        //function FiltrarUsuarios(index) {
+        //    data = {
+        //        NombreUsuario: $("#NombreUsuario").val(),
+        //        NombrePersona: $("#NombrePersona").val(),
+        //        Index: index,
+        //        Take: $("#take").val()
+        //    };
+
+        //    var width = $(window).width();
+        //    var height = $(window).height();
+        //    $("#Loading").show().css("width", width + "px").css("height", height + "px");
+        //    $("#Loading > img").css("margin-left", ((width - 200) / 2) + "px").css("margin-top", ((height - 266) / 2) + "px");
+
+        //    $.ajax({
+        //        cache: false,
+        //        dataType: 'html',
+        //        method: 'POST',
+        //        data: data,
+        //        url: '/Acceso/FiltrarUsuario',
+        //        success: function (html) {
+        //            if (html.indexOf("IniciarSesion") == -1) {
+        //                $("#Loading").hide();
+        //                $("#RenderBandejaUsuarios").html(html);
+        //            } else {
+        //                location.href = "/";
+        //            }
+
+        //        },
+        //        error: function (error) {
+        //            alerta("Sucedió un error al conectarse al servidor", "rojo");
+        //            $("#Loading").hide();
+        //            console.log(error);
+        //        }
+        //    });
+        //}
+    </script>
+
+}

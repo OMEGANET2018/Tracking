@@ -12,9 +12,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet">
     <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/css/estilos.css")" rel="stylesheet" type="text/css" />
-    <script src="~/Scripts/jquery-3.2.1.js"></script>
-    <script src="~/Scripts/JqueryFormValidate.js"></script>
-    <link href="~/Content/themes/base/FormValidatorTheme.css" rel="stylesheet" type="text/css" />
+    @Scripts.Render("~/bundles/jquery")
 </head>
 <body class="login-page">
     <div class="container">
@@ -43,8 +41,10 @@
             </div>
         </div>
     </div>
-    <script>
-    $.validate();
-    </script>
+        <script src="~/Scripts/JqueryFormValidate.js"></script>
+        <link href="~/Content/Themes/FormValidatorTheme.css" rel="stylesheet" type="text/css" />
+        <script>
+            $.validate();
+        </script>
 </body>
 </html>

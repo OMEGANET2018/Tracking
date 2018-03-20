@@ -185,6 +185,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\Administracion\ComponenteController.cs" />
     <Compile Include="Controllers\Administracion\EMOController.cs" />
+    <Compile Include="Controllers\Administracion\EmpresaController.cs" />
     <Compile Include="Controllers\Persona\PersonaController.cs" />
     <Compile Include="Controllers\Usuario\UsuarioController.cs" />
     <Compile Include="Global.asax.cs">

@@ -22,5 +22,12 @@ namespace OTrackingAPI.Controllers.Administracion
             List<BandejaComponente> response = CR.ObtenerListadoComponentes();
             return Ok(response);
         }
+
+        [HttpGet]
+        public IHttpActionResult ObtenerListaTipoValorComponentes()
+        {
+            List<Dropdownlist> response = CR.ObtenerListaTipoValorComponentes();
+            return Ok(response);
+        }
     }
 }

@@ -4,8 +4,6 @@ using DAL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BL.Acceso
 {
@@ -17,11 +15,14 @@ namespace BL.Acceso
         {
             try
             {
+                int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
                 UsuarioAutorizado oUsuarioAutorizado = new UsuarioAutorizado();
                 var qUsuario = (from a in ctx.Usuarios
                                 join b in ctx.Personas on a.PersonaId equals b.PersonaId
                                 join c in ctx.Parametros on new { a = a.RolId, b = 100 } equals new { a = c.ParametroId, b = c.GrupoId }
-                                where a.NombreUsuario == usuario && a.Contrasenia == contrasenia
+                                where a.NombreUsuario == usuario && 
+                                    a.Contrasenia == contrasenia &&
+                                    a.EsEliminado == NoEsEliminado
                                 select new UsuarioAutorizado
                                 {
                                     UsuarioId = a.UsuarioId,
@@ -55,10 +56,10 @@ namespace BL.Acceso
 
         public List<Autorizacion> GetAutorizacion(int rolId)
         {
-
+            int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
             var perfil = (from a in ctx.Perfiles
                           join b in ctx.Menus on a.MenuId equals b.MenuId
-                          where a.RolId == rolId && a.EsEliminado == 0
+                          where a.RolId == rolId && a.EsEliminado == NoEsEliminado
                           select new SubMenu
                           {
                               MenuId = a.MenuId,
@@ -70,7 +71,7 @@ namespace BL.Acceso
 
             var query = (from a in ctx.Perfiles
                          join b in ctx.Menus on a.MenuId equals b.MenuId
-                         where a.RolId == rolId && a.EsEliminado == 0 && b.PadreId == -1
+                         where a.RolId == rolId && a.EsEliminado == NoEsEliminado && b.PadreId == -1
                          select new Autorizacion
                          {
                              PerfilId = a.PerfilId,
@@ -186,6 +187,131 @@ namespace BL.Acceso
             catch (Exception e)
             {
                 return false;
+            }
+        }
+
+        public List<TreeView> GetTreeData(int id)
+        {
+            try
+            {
+                var menus = (from a in ctx.Menus select a).ToList();
+                List<int> accesos = (from a in ctx.Perfiles where a.RolId == id select a.MenuId).ToList();
+
+                List<TreeView> FatherList = new List<TreeView>();
+                foreach (var padre in menus.Where(x => x.PadreId == -1))
+                {
+                    List<TreeView> ChildList = new List<TreeView>();
+                    foreach (var hijo in menus.Where(x => x.PadreId == padre.MenuId))
+                    {
+                        TreeView Child = new TreeView()
+                        {
+                            text = hijo.Descripcion,
+                            state = new TreeViewState()
+                            {
+                                @checked = accesos.Contains(hijo.MenuId)
+                            },
+                            MenuId = hijo.MenuId
+                        };
+                        ChildList.Add(Child);
+                    }
+                    TreeView Father = new TreeView()
+                    {
+                        text = padre.Descripcion,
+                        nodes = ChildList.ToArray(),
+                        state = new TreeViewState()
+                        {
+                            @checked = accesos.Contains(padre.MenuId)
+                        },
+                        MenuId = padre.MenuId
+                    };
+                    FatherList.Add(Father);
+                }
+
+
+                return FatherList;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public Parametro InsertRol(string Nombre, List<TreeView> Tree, int UserID)
+        {
+            try
+            {
+                int rows = 0;
+                int grupo = (int)Enumeradores.GrupoParametros.Roles;
+                int NoEliminado = (int)Enumeradores.EsEliminado.No;
+                List<Parametro> Listado = (from a in ctx.Parametros where a.GrupoId == grupo select a).ToList();
+                int parametroId = (from a in Listado orderby a.ParametroId descending select a.ParametroId).FirstOrDefault() + 1;
+                int? orden = (from a in Listado orderby a.Orden descending select a.Orden).FirstOrDefault();
+
+                orden = orden.HasValue ? orden.Value + 1 : 1;
+
+                Parametro Parametro = (from a in Listado where a.Valor1 == Nombre select a).FirstOrDefault();
+
+                if (Parametro == null)
+                {
+                    Parametro = new Parametro()
+                    {
+                        GrupoId = grupo,
+                        ParametroId = parametroId,
+                        Valor1 = Nombre,
+                        PadreParametroId = -1,
+                        Orden = orden,
+                        EsEliminado = NoEliminado,
+                        FechaGraba = DateTime.Now,
+                        UsuGraba = UserID
+                    };
+
+                    ctx.Parametros.Add(Parametro);
+                    rows = rows + ctx.SaveChanges();
+                }
+
+
+                List<Perfil> ListPerfiles = (from a in ctx.Perfiles where a.RolId == Parametro.ParametroId select a).ToList();
+
+                if (ListPerfiles != null)
+                {
+                    if (ListPerfiles.Count > 0)
+                    {
+                        ctx.Perfiles.RemoveRange(ListPerfiles);
+                        ctx.SaveChanges();
+                    }
+                }
+
+                ListPerfiles = new List<Perfil>();
+
+                foreach (var P in Tree)
+                {
+                    Perfil perfil = new Perfil()
+                    {
+                        RolId = Parametro.ParametroId,
+                        MenuId = P.MenuId,
+                        EsEliminado = NoEliminado,
+                        FechaGraba = DateTime.Now,
+                        UsuGraba = UserID
+                    };
+
+                    ListPerfiles.Add(perfil);
+                }
+
+
+                ctx.Perfiles.AddRange(ListPerfiles);
+
+
+                rows = rows + ctx.SaveChanges();
+                if (rows > 0)
+                    return Parametro;
+
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                return null;
             }
         }
     }

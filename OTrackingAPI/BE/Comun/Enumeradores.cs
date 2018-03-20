@@ -16,7 +16,8 @@
             GrupoSanguineo = 109,
             TipoEmpresas = 110,
             Zonas = 111,
-            Correo = 112
+            Correo = 112,
+            TipoValorComponente = 113
         }
 
 
@@ -39,7 +40,8 @@
             HostSMTP = 1,
             CorreoSistema = 2,
             ClaveCorreo = 3,
-            BodyEnvioEMO = 4
+            BodyEnvioEMO = 4,
+            BodyEnvioRegistroUsuario = 5
         }
     }
 }

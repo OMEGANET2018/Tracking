@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BE.Administracion
 {
-    [Table("tblEmpresas")]
+    [Table("tblEmpresa")]
     public class Empresa
     {
         public int EmpresaId { get; set; }

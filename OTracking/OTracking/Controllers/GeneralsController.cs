@@ -2,17 +2,13 @@
 using OTracking.Models;
 using OTracking.Models.Acceso;
 using OTracking.Utils;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace OTracking.Controllers
 {
     public class GeneralsController : Controller
     {
-        // GET: Generals
         public ActionResult Index()
         {
             return RedirectToRoute("General_login");
@@ -31,6 +27,13 @@ namespace OTracking.Controllers
                 ViewBag.MESSAGE = TempData["MESSAGE"];
             }
             return View("~/Views/Generals/Login.cshtml");
+        }
+
+        public ActionResult Logout()
+        {
+            Session.Remove("AutBackoffice");
+            Session.RemoveAll();
+            return RedirectToRoute("General_login");
         }
 
         public ActionResult Login_authentication(FormCollection collection)
@@ -108,6 +111,12 @@ namespace OTracking.Controllers
 
             return accesoUsuario;
         }
-        
+
+        public ActionResult SessionExpired()
+        {
+            Session.Remove("AutBackoffice");
+            Session.RemoveAll();
+            return RedirectToRoute("General_login");
+        }
     }
 }

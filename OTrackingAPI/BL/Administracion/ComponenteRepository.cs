@@ -19,21 +19,21 @@ namespace BL.Administracion
                 int RecordStatusGrabado = (int)Enumeradores.RecordStatus.Grabado;
 
                 var ListaComponentes = (from a in ctx.Componentes
-                                        join b in ctx.Componentes on a.Id equals b.PadreId
+                                        join b in ctx.Componentes on a.ComponenteId equals b.PadreId
                                         where a.PadreId == 0 &&
                                         a.EsEliminado == NoEsEliminado &&
                                         b.EsEliminado == NoEsEliminado
-                                        group new { a,b} by a.Id into grp
+                                        group new { a,b} by a.ComponenteId into grp
                                         select new BandejaComponente()
                                         {
-                                            Id = grp.FirstOrDefault().a.Id,
+                                            ComponenteId = grp.FirstOrDefault().a.ComponenteId,
                                             EsEliminado = grp.FirstOrDefault().a.EsEliminado,
                                             Nombre = grp.FirstOrDefault().a.Nombre,
                                             RecordStatus = RecordStatusGrabado,
                                             Lista = (from x in grp select new BandejaComponente()
                                                             {
                                                                 EsEliminado = x.b.EsEliminado,
-                                                                Id = x.b.Id,
+                                                                ComponenteId = x.b.ComponenteId,
                                                                 Nombre = x.b.Nombre,
                                                                 PadreId = x.b.PadreId,
                                                                 RecordStatus = RecordStatusGrabado,
@@ -97,7 +97,7 @@ namespace BL.Administracion
                 ctx.Componentes.Add(Padre);
                 ctx.SaveChanges();
 
-                if (Padre.Id == 0)
+                if (Padre.ComponenteId == 0)
                     return false;
 
                 foreach(Componente C in data.Lista)
@@ -107,7 +107,7 @@ namespace BL.Administracion
                         EsEliminado = NoEsEliminado,
                         FechaGraba = DateTime.UtcNow,
                         Nombre = C.Nombre,
-                        PadreId = Padre.Id,
+                        PadreId = Padre.ComponenteId,
                         TipoValorId = C.TipoValorId,
                         ValorMaximo = C.ValorMaximo,
                         ValorMinimo = C.ValorMinimo,
@@ -132,12 +132,12 @@ namespace BL.Administracion
             {
                 int EsEliminado = (int)Enumeradores.EsEliminado.Si;
 
-                var ComponentePadre = (from a in ctx.Componentes where a.Id == data.Id select a).FirstOrDefault();
+                var ComponentePadre = (from a in ctx.Componentes where a.ComponenteId == data.ComponenteId select a).FirstOrDefault();
 
                 if (ComponentePadre == null)
                     return false;
 
-                var ComponentesHijos = (from a in ctx.Componentes where a.PadreId == data.Id select a).ToList();
+                var ComponentesHijos = (from a in ctx.Componentes where a.PadreId == data.ComponenteId select a).ToList();
 
                 foreach (var C in ComponentesHijos)
                 {
@@ -168,7 +168,7 @@ namespace BL.Administracion
                 int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
                 ctx.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted);
 
-                var Padre = (from a in ctx.Componentes where a.Id == data.Id select a).FirstOrDefault();
+                var Padre = (from a in ctx.Componentes where a.ComponenteId == data.ComponenteId select a).FirstOrDefault();
 
                 if (Padre == null)
                     throw new Exception();
@@ -194,7 +194,7 @@ namespace BL.Administracion
                                     EsEliminado = NoEsEliminado,
                                     FechaGraba = DateTime.UtcNow,
                                     Nombre = C.Nombre,
-                                    PadreId = Padre.Id,
+                                    PadreId = Padre.ComponenteId,
                                     TipoValorId = C.TipoValorId,
                                     UsuGraba = data.UsuActualiza,
                                     ValorMaximo = C.ValorMaximo,
@@ -207,7 +207,7 @@ namespace BL.Administracion
                             }
                         case (int)Enumeradores.RecordStatus.Eliminar:
                             {
-                                var Hijo = (from a in ctx.Componentes where a.Id == C.Id select a).FirstOrDefault();
+                                var Hijo = (from a in ctx.Componentes where a.ComponenteId == C.ComponenteId select a).FirstOrDefault();
 
                                 Hijo.EsEliminado = EsEliminado;
                                 Hijo.UsuActualiza = data.UsuActualiza;
@@ -218,7 +218,7 @@ namespace BL.Administracion
                             }
                         case (int)Enumeradores.RecordStatus.Editar:
                             {
-                                var Hijo = (from a in ctx.Componentes where a.Id == C.Id select a).FirstOrDefault();
+                                var Hijo = (from a in ctx.Componentes where a.ComponenteId == C.ComponenteId select a).FirstOrDefault();
 
                                 Hijo.UsuActualiza = data.UsuActualiza;
                                 Hijo.FechaActualiza = DateTime.UtcNow;
@@ -241,6 +241,22 @@ namespace BL.Administracion
                 ctx.Database.CurrentTransaction.Rollback();
                 return false;
             }
+        }
+
+        public List<Dropdownlist> ObtenerListaTipoValorComponentes()
+        {
+            int grupoParametro = (int)Enumeradores.GrupoParametros.TipoValorComponente;
+            int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
+
+            var data = (from a in ctx.Parametros
+                        where a.GrupoId == grupoParametro && a.EsEliminado == NoEsEliminado
+                        select new Dropdownlist()
+                        {
+                            Id = a.ParametroId,
+                            Value = a.Valor1
+                        }).ToList();
+
+            return data;
         }
     }
 }

@@ -19,4 +19,10 @@ namespace BE.Comun
         public int? UsuActualiza { get; set; }
         public DateTime? FechaActualiza { get; set; }
     }
+
+    public class Dropdownlist
+    {
+        public int Id { get; set; }
+        public string Value { get; set; }
+    }
 }
