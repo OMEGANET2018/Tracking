@@ -2,6 +2,7 @@
 using BE.Comun;
 using System.Web.Http;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace OTrackingAPI.Controllers.Administracion
 {
@@ -10,9 +11,10 @@ namespace OTrackingAPI.Controllers.Administracion
         private ComponenteRepository CR = new ComponenteRepository();
 
         [HttpPost]
-        public IHttpActionResult GuardarCambiosComponente(BandejaComponente data)
+        public IHttpActionResult GuardarCambiosComponente(MultiDataModel data)
         {
-            bool response = CR.GuardarCambiosComponente(data);
+            BandejaComponente bandeja = JsonConvert.DeserializeObject<BandejaComponente>(data.String1);
+            bool response = CR.GuardarCambiosComponente(bandeja);
             return Ok(response);
         }
 

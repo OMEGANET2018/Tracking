@@ -6,7 +6,7 @@ namespace BE.Persona
     [Table("tblColaborador")]
     public class Colaborador
     {
-        public int Id { get; set; }
+        public int ColaboradorId { get; set; }
         public int PersonaId { get; set; }
         public int? SedeId { get; set; }
         public string Direccion { get; set; }

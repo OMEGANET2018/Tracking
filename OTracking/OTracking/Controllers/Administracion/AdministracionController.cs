@@ -5,6 +5,7 @@ using OTracking.Controllers.Seguridad;
 using System.Web.Mvc;
 using System.IO;
 using Newtonsoft.Json;
+using OTracking.Utils;
 
 namespace OTracking.Controllers.Administracion
 {
@@ -37,8 +38,8 @@ namespace OTracking.Controllers.Administracion
         public ActionResult ConfiguradorComponentes()
         {
             Api API = new Api();
-            ViewBag.Componentes = new List<BandejaComponente>();
-            ViewBag.TipoValores = API.Get<List<Dropdownlist>>("Componente/ObtenerListaTipoValorComponentes");
+            ViewBag.Componentes = API.Get<List<BandejaComponente>>("Componente/ObtenerListadoComponentes");
+            ViewBag.TipoValores = Utils.Utils.LoadDropDownList(API.Get<List<Dropdownlist>>("Componente/ObtenerListaTipoValorComponentes"),Constantes.Select);
             return View();
         }
 
@@ -47,9 +48,29 @@ namespace OTracking.Controllers.Administracion
         {
             Api API = new Api();
 
-            ViewBag.Componentes = API.Get<List<BandejaComponente>>("Administracion/ObtenerListadoComponente");
+            ViewBag.Componentes = API.Get<List<BandejaComponente>>("Componente/ObtenerListadoComponentes");
 
             return PartialView("_BandejaComponentesPartial");
+        }
+
+        [GeneralSecurity(Rol = "Administracion-Configurador de Componentes")]
+        public JsonResult EnviarComponente(BandejaComponente data)
+        {
+            Api API = new Api();
+
+            data.UsuGraba = ViewBag.USUARIO.UsuarioId;
+
+            Dictionary<string, string> args = new Dictionary<string, string>()
+            {
+                { "String1", JsonConvert.SerializeObject(data) }
+            };
+
+            bool saved = API.Post<bool>("Componente/GuardarCambiosComponente", args);
+
+            if (saved)
+                return Json(saved);
+            else
+                return Json(null);
         }
     }
 }
