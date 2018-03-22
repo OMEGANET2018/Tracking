@@ -13,6 +13,7 @@ namespace BE.Administracion
         public int EmpresaId { get; set; }
         public string RazonSocial { get; set; }
         public string Ruc { get; set; }
+        public string Email { get; set; }
         public int TipoEmpresaId { get; set; }
         public int EsEliminado { get; set; }
         public int? UsuGraba { get; set; }

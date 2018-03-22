@@ -23,6 +23,7 @@ namespace BL.Personas
         {
             try
             {
+                System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("es-PE");
                 int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
                 int RegistrosInsertados = 0;
                 int RegistrosErrados = 0;
@@ -38,7 +39,7 @@ namespace BL.Personas
                 while (!finArchivo)
                 {
                     try
-                    {
+                    {   
                         index++;
                         IRow Row = Sheet.GetRow(index);
 
@@ -50,8 +51,8 @@ namespace BL.Personas
                             DateTime? FechaNacimiento = null;
                             if (dia.HasValue && mes.HasValue && año.HasValue)
                             {
-                                if (DateTime.TryParse(string.Format("{0}-{1}-{2}T00:00:00", año.Value, mes.Value, dia.Value),CultureInfo.InvariantCulture,DateTimeStyles.AssumeUniversal, out DateTime F))
-                                    FechaNacimiento = F;
+                                if (DateTime.TryParse(string.Format("{0}-{1}-{2}T00:00:00", año.Value, mes.Value, dia.Value), CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out DateTime F))
+                                    FechaNacimiento = F.ToUniversalTime();
                             }
 
                             dia = Row.GetCell(20) != null ? (int?)int.Parse(Row.GetCell(20).ToString()) : null;
@@ -60,8 +61,8 @@ namespace BL.Personas
                             DateTime? FechaIngreso = null;
                             if (dia.HasValue && mes.HasValue && año.HasValue)
                             {
-                                if (DateTime.TryParse(string.Format("{0}-{1}-{2}T00:00:00", año.Value, mes.Value, dia.Value), CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out DateTime F))
-                                    FechaIngreso = F;
+                                if (DateTime.TryParse(string.Format("{0}-{1}-{2}T00:00:00", año.Value, mes.Value, dia.Value), CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out DateTime F))
+                                    FechaIngreso = F.ToUniversalTime();
                             }
 
                             Persona p = new Persona()

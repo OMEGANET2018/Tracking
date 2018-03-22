@@ -1,11 +1,11 @@
-﻿using BL.Administracion;
+﻿using BL.Seguimiento;
 using BE.Comun;
 using System.IO;
 using System.Web.Hosting;
 using System.Web.Http;
 using Newtonsoft.Json;
 
-namespace OTrackingAPI.Controllers.Administracion
+namespace OTrackingAPI.Controllers.Seguimiento
 {
     public class EMOController : ApiController
     {
@@ -20,7 +20,7 @@ namespace OTrackingAPI.Controllers.Administracion
         }
 
         [HttpPost]
-        public IHttpActionResult PlantillaEMO(MultiDataModel data)
+        public IHttpActionResult CrearEMO(MultiDataModel data)
         {
             BandejaEMO EMO = JsonConvert.DeserializeObject<BandejaEMO>(data.String1);
 

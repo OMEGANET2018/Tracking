@@ -48,7 +48,8 @@ namespace BE.Comun
 
     public class BandejaEMO : Bandejas
     {
-        public string Correos { get; set; }
+        public string Nombre { get; set; }
+        public int EmpresaId { get; set; }
         public bool EnviarCorreo { get; set; }
         public bool DescargarArchivo { get; set; }
         public List<BandejaEMODetalle> Lista { get; set; }
@@ -77,17 +78,5 @@ namespace BE.Comun
         public int? DiscapacitadoId { get; set; }
         public string ProveedorClinica { get; set; }
         public string SedeRUC { get; set; }
-        public decimal? IMC { get; set; }
-        public decimal? ICC { get; set; }
-    }
-
-    public class BandejaGenerarPlantilla : Bandejas
-    {
-        public List<BandejaGenerarPlantillaLista> Lista { get; set; }
-    }
-
-    public class BandejaGenerarPlantillaLista
-    {
-        public string Nombre { get; set; }
     }
 }

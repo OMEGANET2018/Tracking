@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Administracion\Empresa.cs" />
     <Compile Include="Comun\Bandejas.cs" />
+    <Compile Include="Comun\Dropdownlist.cs" />
     <Compile Include="Comun\Enumeradores.cs" />
     <Compile Include="Comun\MultiDataModel.cs" />
     <Compile Include="Comun\TreeView.cs" />

@@ -46,13 +46,37 @@ namespace OTracking.Models.Comun
         public List<BandejaComponente> Lista { get; set; }
     }
 
-    public class BandejaGenerarPlantilla : Bandejas
-    {
-        public List<BandejaGenerarPlantillaLista> Lista { get; set; }
-    }
-
-    public class BandejaGenerarPlantillaLista
+    public class BandejaEMO : Bandejas
     {
         public string Nombre { get; set; }
+        public int EmpresaId { get; set; }
+        public bool EnviarCorreo { get; set; }
+        public bool DescargarArchivo { get; set; }
+        public List<BandejaEMODetalle> Lista { get; set; }
+    }
+
+    public class BandejaEMODetalle
+    {
+        public string TipoDocumento { get; set; }
+        public int TipoDocumentoId { get; set; }
+        public string NroDocumento { get; set; }
+        public string Nombres { get; set; }
+        public string ApellidoPaterno { get; set; }
+        public string ApellidoMaterno { get; set; }
+        public DateTime? FechaNacimiento { get; set; }
+        public int? Edad { get; set; }
+        public string Genero { get; set; }
+        public int? GeneroId { get; set; }
+        public string GradoDeInstruccion { get; set; }
+        public int? GradoDeInstruccionId { get; set; }
+        public string PuestoLaboral { get; set; }
+        public string Area { get; set; }
+        public string Zona { get; set; }
+        public int? ZonaId { get; set; }
+        public string LugarDeTrabajo { get; set; }
+        public string Discapacitado { get; set; }
+        public int? DiscapacitadoId { get; set; }
+        public string ProveedorClinica { get; set; }
+        public string SedeRUC { get; set; }
     }
 }

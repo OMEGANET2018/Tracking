@@ -7,11 +7,11 @@
 
     if (ViewBag.Bandeja != null)
     {
-        Take = ViewBag.Usuarios.Take;
-        Index = ViewBag.Usuarios.Index;
-        Total = ViewBag.Usuarios.TotalRegistros;
+        Take = ViewBag.Bandeja.Take;
+        Index = ViewBag.Bandeja.Index;
+        Total = ViewBag.Bandeja.TotalRegistros;
         Primer = ((Index - 1) * Take) + 1;
-        Ultimo = Primer + (ViewBag.Usuarios.Lista.Count - 1);
+        Ultimo = Primer + (ViewBag.Bandeja.Lista.Count - 1);
 
         Primer = Primer < 0 ? 0 : Primer;
         Ultimo = Ultimo < 0 ? 0 : Ultimo;
@@ -33,7 +33,7 @@
     <span class="informacion">Mostrando desde N° @Primer hasta @Ultimo de un total de @Total entradas</span>
     <div class="float-lg-right">
         Total de registros:
-        <select id="take">
+        <select id="take" onchange="Filtrar(1)">
             <option value="10" @(Take == 10 ? "selected" : "")>10</option>
             <option value="25" @(Take == 25 ? "selected" : "")>25</option>
             <option value="50" @(Take == 50 ? "selected" : "")>50</option>
@@ -46,25 +46,51 @@
         <table class="table table-hover" id="TablaAExportar">
             <thead>
                 <tr>
-                    <th>Nombre</th>
+                    <th><input type="checkbox" onclick="CheckAll(this)" /></th>
+                    <th>Documento</th>
+                    <th>N° Documento</th>
+                    <th>Nombres</th>
+                    <th>Ap Paterno</th>
+                    <th>Ap Materno</th>
+                    <th>Fecha Nac</th>
+                    <th>Edad</th>
+                    <th>Puesto</th>
+                    <th>Area</th>
+                    <th>Zona</th>
+                    <th>Lugar Trabajo</th>
+                    <th>Discapacitado</th>
+                    <th>Sede Colaborador</th>
                 </tr>
             </thead>
             <tbody>
                 @{
                     if (ViewBag.Bandeja == null)
                     {
-                        <tr><td colspan="7" class="text-center">Error al conectarse al servidor</td></tr>
+                        <tr><td colspan="12" class="text-center">Error al conectarse al servidor</td></tr>
                     }
                     else if (ViewBag.Bandeja.Lista.Count == 0)
                     {
-                        <tr><td colspan="7" class="text-center">No hay resultados</td></tr>
+                        <tr><td colspan="12" class="text-center">No hay resultados</td></tr>
                     }
                     else
                     {
-                        foreach (var item in ViewBag.Bandeja.Lista)
+                        foreach (OTracking.Models.Comun.BandejaEMODetalle item in ViewBag.Bandeja.Lista)
                         {
                             <tr>
-                                <td>@item.Nombre</td>
+                                <td><input type="checkbox" onclick="SingleCheck()"/></td>
+                                <td>@item.TipoDocumento</td>
+                                <td id="nroDocumento">@item.NroDocumento</td>
+                                <td>@item.Nombres</td>
+                                <td>@item.ApellidoPaterno</td>
+                                <td>@item.ApellidoMaterno</td>
+                                <td>@(item.FechaNacimiento.HasValue ? item.FechaNacimiento.Value.ToString("dd/MM/yyyy") : "")</td>
+                                <td>@item.Edad</td>
+                                <td>@item.PuestoLaboral</td>
+                                <td>@item.Area</td>
+                                <td>@item.Zona</td>
+                                <td>@item.LugarDeTrabajo</td>
+                                <td>@item.Discapacitado</td>
+                                <td>@item.SedeRUC</td>
                             </tr>
                         }
                     }
@@ -77,6 +103,9 @@
                     @{
                         if (Index > 1)
                         {
+                            <li class="page-item" onclick="Filtrar(1)">
+                                <span class="page-link" aria-hidden="true">Primero</span>
+                            </li>
                             <li class="page-item" onclick="Filtrar(@(Index - 1))">
                                 <span class="page-link" aria-hidden="true">Anterior</span>
                             </li>
@@ -87,13 +116,20 @@
                             for (int i = 0; i < Total; i = i + Take)
                             {
                                 pagina++;
-                                <li @(pagina == Index ? "class=pagination-active" : "onclick=Filtrar(" + pagina + ")")><span class="page-link" aria-hidden="true">@pagina</span></li>
+                                if((pagina > (Index - 5)) && pagina < (Index + 5))
+                                {
+                                    <li @(pagina == Index ? "class=pagination-active" : "onclick=Filtrar(" + pagina + ")")><span class="page-link" aria-hidden="true">@pagina</span></li>
+                                }
+                                
                             }
                         }
                         if (pagina > Index)
                         {
                             <li class="page-item" onclick="Filtrar(@(Index + 1))">
                                 <span class="page-link" aria-hidden="true">Siguiente</span>
+                            </li>
+                            <li class="page-item" onclick="Filtrar(@(pagina))">
+                                <span class="page-link" aria-hidden="true">Ultimo</span>
                             </li>
                         }
                     }

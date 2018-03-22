@@ -11,7 +11,6 @@ namespace OTracking.Controllers.Seguridad
         [GeneralSecurity(Rol = "Seguridad-Usuario de Sistema")]
         public ActionResult BandejaUsuarios()
         {
-            Api API = new Api();
             ViewBag.Usuarios = new BandejaUsuario() { Lista = new List<BandejaUsuarioLista>(), Take = 10 };
             return View();
         }

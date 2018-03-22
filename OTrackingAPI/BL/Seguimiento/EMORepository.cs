@@ -9,13 +9,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using BE;
 
-namespace BL.Administracion
+namespace BL.Seguimiento
 {
     public class EMORepository
     {
         private DatabaseContext ctx = new DatabaseContext();
 
-        public BandejaEMO ObtenerBandejaEMO(BandejaEMO data)
+        public BandejaEMO ObtenerBandejaEMO(BandejaEMO data, string proveedorClinica = "")
         {
             try
             {
@@ -25,67 +25,72 @@ namespace BL.Administracion
                 int GrupoGradoInstruccion = (int)Enumeradores.GrupoParametros.GradoDeInstruccion;
                 int GrupoZona = (int)Enumeradores.GrupoParametros.Zonas;
                 int GrupoSiNo = (int)Enumeradores.GrupoParametros.SiNo;
+                string nombre = string.IsNullOrWhiteSpace(data.Nombre) ? "" : data.Nombre;
+                int skip = (data.Index - 1) * data.Take;
 
-                var Parametros = (from a in ctx.Parametros where a.EsEliminado == NoEsEliminado select a).ToList();
+                List<string> listaBusqueda = new List<string>();
 
                 var return_data = (from a in ctx.Personas
-                                   join b in ctx.Colaboradores on a.PersonaId equals b.PersonaId
-                                   where a.EsEliminado == NoEsEliminado
+                                   join l in ctx.Colaboradores on a.PersonaId equals l.PersonaId
+                                   join Empresa in ctx.Empresas on l.SedeId equals Empresa.EmpresaId into GEmp
+                                   from k in GEmp.DefaultIfEmpty()
+                                   join b in ctx.Parametros on new { a = a.TipoDocumentoId, b = GrupoTipoDocumento } equals new { a = b.ParametroId, b = b.GrupoId }
+                                   join c in ctx.Parametros on new { a = a.GeneroId.HasValue ? a.GeneroId.Value : 0, b = GrupoGenero } equals new { a = c.ParametroId, b = c.GrupoId } into grupoC
+                                   from d in grupoC.DefaultIfEmpty()
+                                   join e in ctx.Parametros on new { a = l.GradoInstruccionId.HasValue ? l.GradoInstruccionId.Value : 0, b = GrupoGradoInstruccion } equals new { a = e.ParametroId, b = e.GrupoId } into grupoE
+                                   from f in grupoE.DefaultIfEmpty()
+                                   join g in ctx.Parametros on new { a = l.ZonaId.HasValue ? l.ZonaId.Value : 0, b = GrupoZona } equals new { a = g.ParametroId, b = g.GrupoId } into grupoG
+                                   from h in grupoG.DefaultIfEmpty()
+                                   join i in ctx.Parametros on new { a = l.DiscapacitadoId.HasValue ? l.DiscapacitadoId.Value : 0, b = GrupoSiNo } equals new { a = i.ParametroId, b = i.GrupoId } into grupoI
+                                   from j in grupoI.DefaultIfEmpty()
+                                   where a.EsEliminado == NoEsEliminado &&
+                                        b.EsEliminado == NoEsEliminado &&
+                                        k.EsEliminado == NoEsEliminado &&
+                                        (a.Nombres + " " + a.ApellidoPaterno + " " + a.ApellidoMaterno).Contains(nombre)
                                    select new BandejaEMODetalle()
                                    {
                                        TipoDocumentoId = a.TipoDocumentoId,
+                                       TipoDocumento = b.Valor1,
                                        NroDocumento = a.NroDocumento,
                                        Nombres = a.Nombres,
                                        ApellidoPaterno = a.ApellidoPaterno,
                                        ApellidoMaterno = a.ApellidoMaterno,
                                        FechaNacimiento = a.FechaNacimiento,
                                        GeneroId = a.GeneroId,
-                                       GradoDeInstruccionId = b.GradoInstruccionId,
-                                       PuestoLaboral = b.PuestoLaboral,
-                                       Area = b.Area,
-                                       ZonaId = b.ZonaId,
-                                       LugarDeTrabajo = b.LugarDeTrabajo,
-                                       DiscapacitadoId = b.DiscapacitadoId,
-                                       ProveedorClinica = "",
-                                       SedeRUC = ""
+                                       Genero = d.Valor1,
+                                       GradoDeInstruccionId = l.GradoInstruccionId,
+                                       GradoDeInstruccion = f.Valor1,
+                                       PuestoLaboral = l.PuestoLaboral,
+                                       Area = l.Area,
+                                       ZonaId = l.ZonaId,
+                                       Zona = h.Valor1,
+                                       LugarDeTrabajo = l.LugarDeTrabajo,
+                                       DiscapacitadoId = l.DiscapacitadoId,
+                                       Discapacitado = j.Valor1,
+                                       ProveedorClinica = proveedorClinica,
+                                       SedeRUC = k.Ruc
                                    }).ToList();
 
-                data.Lista = (from a in return_data
-                              join b in Parametros on new { a = a.TipoDocumentoId, b = GrupoTipoDocumento } equals new { a = b.ParametroId, b = b.GrupoId }
-                              join c in Parametros on new { a = a.GeneroId.HasValue ? a.GeneroId.Value : 0, b = GrupoGenero } equals new { a = c.ParametroId, b = c.GrupoId } into grupoC
-                              from d in grupoC.DefaultIfEmpty()
-                              join e in Parametros on new { a = a.GradoDeInstruccionId.HasValue ? a.GradoDeInstruccionId.Value : 0, b = GrupoGradoInstruccion } equals new { a = e.ParametroId, b = e.GrupoId } into grupoE
-                              from f in grupoE.DefaultIfEmpty()
-                              join g in Parametros on new { a = a.ZonaId.HasValue ? a.ZonaId.Value : 0, b = GrupoZona } equals new { a = g.ParametroId, b = g.GrupoId } into grupoG
-                              from h in grupoG.DefaultIfEmpty()
-                              join i in Parametros on new { a = a.DiscapacitadoId.HasValue ? a.DiscapacitadoId.Value : 0, b = GrupoSiNo } equals new { a = i.ParametroId, b = i.GrupoId } into grupoI
-                              from j in grupoI.DefaultIfEmpty()
-                              select new BandejaEMODetalle()
-                              {
-                                  TipoDocumentoId = a.TipoDocumentoId,
-                                  TipoDocumento = b.Valor1,
-                                  NroDocumento = a.NroDocumento,
-                                  Nombres = a.Nombres,
-                                  ApellidoPaterno = a.ApellidoPaterno,
-                                  ApellidoMaterno = a.ApellidoMaterno,
-                                  FechaNacimiento = a.FechaNacimiento,
-                                  GeneroId = a.GeneroId,
-                                  Genero = d.Valor1,
-                                  GradoDeInstruccionId = a.GradoDeInstruccionId,
-                                  GradoDeInstruccion = f.Valor1,
-                                  PuestoLaboral = a.PuestoLaboral,
-                                  Area = a.Area,
-                                  ZonaId = a.ZonaId,
-                                  Zona = h.Valor1,
-                                  LugarDeTrabajo = a.LugarDeTrabajo,
-                                  DiscapacitadoId = a.DiscapacitadoId,
-                                  Discapacitado = j.Valor1,
-                                  ProveedorClinica = a.ProveedorClinica,
-                                  SedeRUC = a.SedeRUC,
-                                  Edad = a.FechaNacimiento.HasValue ? (int?)DateTime.UtcNow.AddTicks(- a.FechaNacimiento.Value.Ticks).Year : null,
-                                  ICC = 0,
-                                  IMC = 0
-                              }).ToList();
+                if (data.Lista != null)
+                {
+                    listaBusqueda = data.Lista.Select(x => x.NroDocumento).ToList();
+                    return_data = return_data.Where(x => listaBusqueda.Contains(x.NroDocumento)).ToList();
+                }
+
+                foreach (var A in return_data)
+                {
+                    A.FechaNacimiento = A.FechaNacimiento.HasValue ? (DateTime?)DateTime.Parse(A.FechaNacimiento.Value.ToString("yyyy-MM-ddThh:mm:ss"), System.Globalization.CultureInfo.CurrentCulture,System.Globalization.DateTimeStyles.AssumeUniversal) : null;
+                    A.Edad = A.FechaNacimiento.HasValue ? (int?)DateTime.Now.AddTicks(-A.FechaNacimiento.Value.Ticks).Year : null;
+                }
+
+                int TotalRegistros = return_data.Count;
+
+                if (data.Take > 0)
+                    return_data = return_data.Skip(skip).Take(data.Take).ToList();
+
+                data.TotalRegistros = TotalRegistros;
+
+                data.Lista = return_data;
 
                 return data;
             }
@@ -99,19 +104,22 @@ namespace BL.Administracion
         {
             try
             {
+                System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("es-PE");
                 IWorkbook TemplateBook = new XSSFWorkbook(TemplateFile);
                 ISheet TemplateSheet = TemplateBook.GetSheet(TemplateBook.GetSheetName(0));
 
-                int index = 7;
+                int index = 6;
                 int contador = 0;
 
-                IRow TemplateRow = TemplateSheet.CreateRow(index);
+                var clinica = (from a in ctx.Empresas where a.EmpresaId == EMO.EmpresaId select a).FirstOrDefault();
+
+                IRow TemplateRow = TemplateSheet.GetRow(index);
                 ICellStyle EstiloObscuro = TemplateRow.GetCell(0).CellStyle;
                 ICellStyle EstiloClaro = TemplateRow.GetCell(1).CellStyle;
 
                 TemplateSheet.RemoveRow(TemplateRow);
 
-                var datalist = ObtenerBandejaEMO(EMO);
+                var datalist = ObtenerBandejaEMO(EMO,clinica == null ? "" : clinica.RazonSocial);
 
                 foreach (var data in datalist.Lista)
                 {
@@ -205,29 +213,15 @@ namespace BL.Administracion
                     TemplateCell.SetCellValue(data.SedeRUC);
                     TemplateCell.CellStyle = EstiloObscuro;
 
-                    ///////////////////////////////////////////////////
-
                     TemplateCell = TemplateRow.CreateCell(35);
-                    TemplateCell.SetCellValue(data.IMC.HasValue ? data.IMC.Value.ToString("N2") : "");
                     TemplateCell.CellStyle = EstiloObscuro;
-
-                    ////////////////////////////////////////////////////
 
                     TemplateCell = TemplateRow.CreateCell(40);
-                    TemplateCell.SetCellValue(data.ICC.HasValue ? data.ICC.Value.ToString("N2") : "");
                     TemplateCell.CellStyle = EstiloObscuro;
-
-                    ////////////////////////////////////////////////////////////
 
                     index++;
                     contador++;
                 }
-
-                for (int i = 0; i <= 116; i++)
-                {
-                    TemplateSheet.AutoSizeColumn(i);
-                }
-
 
                 MemoryStream ms = new MemoryStream();
                 using (MemoryStream tempStream = new MemoryStream())
@@ -255,7 +249,7 @@ namespace BL.Administracion
 
                     string subject = "Envio de EMO";
                     List<string> adresses = new List<string>();
-                    adresses.Add(EMO.Correos);
+                    adresses.Add(clinica.Email);
 
                     Dictionary<string,MemoryStream> Attachments = new Dictionary<string,MemoryStream>();
 
