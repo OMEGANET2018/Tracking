@@ -187,6 +187,7 @@
     <Compile Include="Controllers\Seguimiento\EMOController.cs" />
     <Compile Include="Controllers\Administracion\EmpresaController.cs" />
     <Compile Include="Controllers\Persona\PersonaController.cs" />
+    <Compile Include="Controllers\Seguimiento\PlanDeVidaController.cs" />
     <Compile Include="Controllers\Usuario\UsuarioController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

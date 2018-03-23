@@ -17,7 +17,8 @@
             TipoEmpresas = 110,
             Zonas = 111,
             Correo = 112,
-            TipoValorComponente = 113
+            TipoValorComponente = 113,
+            TipoTiempo = 114
         }
 
 

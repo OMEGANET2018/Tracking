@@ -144,6 +144,7 @@
     <Compile Include="Controllers\GeneralsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Seguimiento\EMOController.cs" />
+    <Compile Include="Controllers\Seguimiento\PlanesDeVidaController.cs" />
     <Compile Include="Controllers\Seguridad\AccesoController.cs" />
     <Compile Include="Controllers\Seguridad\GeneralSecurityAttributeController.cs" />
     <Compile Include="Global.asax.cs">
@@ -392,6 +393,9 @@
     <Content Include="Views\Shared\_BandejaComponentesPartial.cshtml" />
     <Content Include="Views\EMO\BandejaEMO.cshtml" />
     <Content Include="Views\Shared\_BandejaEMOPartial.cshtml" />
+    <Content Include="Views\PlanesDeVida\BandejaPlanesDeVida.cshtml" />
+    <Content Include="Views\Shared\_PlanesDeVidaPartial.cshtml" />
+    <Content Include="Views\PlanesDeVida\CrearPlanDeVida.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

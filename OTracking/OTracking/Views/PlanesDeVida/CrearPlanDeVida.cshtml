@@ -1,0 +1,549 @@
+﻿@{
+    string Nombre = "";
+    int ID = 0;
+    int StatusPlan = 2;
+
+
+    if (ViewBag.PlanDeVida != null)
+    {
+        Nombre = ViewBag.PlanDeVida.Nombre;
+        ID = ViewBag.PlanDeVida.PlanDeVidaId;
+        StatusPlan = ViewBag.PlanDeVida.StatusId;
+    }
+}
+
+
+<style>
+    .Titulo {
+        font-weight: bolder;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .SubTitulo {
+        margin-top: 20px;
+    }
+
+    select {
+        width: 186px;
+        height: 28px;
+    }
+
+    .IconoMas {
+        cursor: pointer;
+        width: 20px;
+        float: right;
+    }
+
+    .botonera {
+        margin: 60px 0px;
+    }
+
+        .botonera > div {
+            display: inline-block;
+            margin-left: 30px;
+            width: 150px;
+            margin-top: 20px;
+        }
+
+            .botonera > div > input {
+                width: 150px;
+                height: 38px;
+                cursor: pointer;
+            }
+
+    #Loading {
+        background-color: rgba(0, 0, 0, 0.60);
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        z-index: 9999;
+    }
+
+        #Loading > img {
+            width: 200px;
+        }
+
+    #Accordion-Container {
+        overflow: hidden;
+        height: 0px;
+    }
+
+    .borders {
+        padding: 30px;
+    }
+
+        .borders > div {
+            border: 1px solid black;
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+    input, select {
+        width: 100%;
+        max-width: 100%;
+        height: 38px;
+    }
+
+    .Titulo img {
+        float: right;
+        width: 30px;
+        margin-right: 20px;
+        cursor: pointer;
+    }
+
+    table {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+        table thead tr {
+            background-color: black;
+            color: white;
+            font-weight: bolder;
+            text-align: center;
+        }
+
+        table tbody tr td {
+            text-align: center !important;
+        }
+
+        table thead tr th:first-child {
+            border-bottom-left-radius: 10px;
+            border-top-left-radius: 10px;
+        }
+
+        table thead tr th:last-child {
+            border-bottom-right-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+    .Suspendido {
+        background-color: #989898;
+        pointer-events: none;
+    }
+
+    table input {
+        height: 25px;
+        width: 80%;
+    }
+
+    #myModal input,#myModal select{
+        width:auto;
+        margin:0px 10px;
+    }
+    #myModal .modal-body > div > div{
+        display:inline-block;
+    }
+</style>
+
+<form style="width:100%;">
+    <div class="container-fluid">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-12 Titulo" style="margin-top:40px;">Plan De Vida </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="SubTitulo" style="text-align:center;">Nombre: </div>
+                    <div style="text-align:center;"><input type="text" id="NombrePlan" value="@Nombre" data-validation="length" data-validation-length="3-50" data-validation-error-msg="El Nombre debe de tener entre 3 y 50 caracteres" style="max-width:500px;" onkeypress="CambioNombrePadre()" /></div>
+                    <input type="text" style="display:none;" id="StatusPlan" value="@StatusPlan"/>
+                    <input type="text" style="display:none;" id="IdPlan" value="@ID"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6 borders">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-12 Titulo">Diagnósticos <img src="~/Content/Images/icon-SignoMas-Naranja.png" onclick="NuevoDiagnostico()" /></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <table id="tabla-diagnosticos">
+                                    <thead>
+                                        <tr>
+                                            <th>CIE10</th>
+                                            <th>Diagnóstico</th>
+                                            <th>Control</th>
+                                            <th>Editar Control</th>
+                                            <th>Eliminar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr id="tr-eliminar"><td colspan="4">No hay campos agregados</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 borders">
+                    <div>
+                        <div class="row">
+                            <div class="col-12 Titulo">Citas <img src="~/Content/Images/icon-SignoMas-Naranja.png" onclick="NuevaCita()" /></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <table id="tabla-citas">
+                                    <thead>
+                                        <tr>
+                                            <th>Cita</th>
+                                            <th>Editar Cita</th>
+                                            <th>Eliminar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr id="tr-eliminar"><td colspan="4">No hay campos agregados</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-center" style="color:red;display:none;" id="message"></div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-center botonera">
+                <div>
+                    <button class="btn-warning boton form-control" type="submit" style="cursor:pointer;" onclick="$('#message').hide()">
+                        <i class="fa fa-search"></i> Guardar
+                    </button>
+                </div>
+                <div>
+                    <button class="btn-warning boton form-control" type="button" onclick="location.href='@Url.Action("BandejaPlanesDeVida", "PlanesDeVida")'" style="cursor:pointer;">
+                        <i class="fa fa-search"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Editar Control</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div><div style="width:80px;margin-left:30px;">Control de:</div><div><input type="text" id="tipoControl" onkeydown="$(this).css('border-color','initial')"/></div></div>
+                <div><div style="width:80px;margin-left:30px;">Cada:</div><div><input type="number" id="inputCada" onkeydown="$(this).css('border-color','initial')"/><select id="select1" onchange="$(this).css('border-color','initial')">@{if (ViewBag.TipoTiempo != null) { foreach (OTracking.Models.Comun.Dropdownlist T in ViewBag.TipoTiempo) {<option value="@T.Id">@T.Value</option> } } }</select></div></div>
+                <div><div style="width:80px;margin-left:30px;">Durante:</div><div><input type="number" id="inputDurante" onkeydown="$(this).css('border-color','initial')"/><select id="select2" onchange="$(this).css('border-color','initial')">@{if (ViewBag.TipoTiempo != null) { foreach (OTracking.Models.Comun.Dropdownlist T in ViewBag.TipoTiempo) {<option value="@T.Id">@T.Value</option> } } }</select></div></div>
+            </div>
+            <div class="modal-footer">
+                <button id="PopupAceptar" type="button" class="btn-warning boton form-control">Aceptar</button>
+                <button type="button" class="btn-warning boton form-control" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<table id="tabla-mensaje-inicial" style="display:none;">
+    <tbody>
+        <tr id="tr-eliminar"><td colspan="4" class="text-center">No hay campos agregados</td></tr>
+    </tbody>
+</table>
+
+<table id="tabla-nuevo-diagnostico" style="display:none;">
+    <tbody>
+        <tr>
+            <td><input type="text" onkeyup="ObtenerDx(this)" /></td>
+            <td id="DxDescripcion"></td>
+            <td id="DxControl"></td>
+            <td><a onclick="EditarControl(this)"><span class="icon-pencil"></span></a></td>
+            <td><a onclick="BorrarDiagnostico(this)"><span class="icon-trash"></span></a></td>
+            <td style="display:none;"><input type="text" id="diagnostico-id" value="0" /></td>
+            <td style="display:none;"><input type="text" id="diagnostico-Numero" value="0" /></td>
+            <td style="display:none;"><input type="text" id="diagnostico-NumeroTipoId" value="0" /></td>
+            <td style="display:none;"><input type="text" id="diagnostico-Repeticion" value="0" /></td>
+            <td style="display:none;"><input type="text" id="diagnostico-RepeticionTipoId" value="0" /></td>
+            <td style="display:none;"><input type="text" id="diagnostico-status" value="2" /></td>
+        </tr>
+    </tbody>
+</table>
+
+<table id="tabla-nueva-cita" style="display:none;">
+    <tbody>
+        <tr>
+            <td id="CitaDescripcion"></td>
+            <td><a onclick="EditarCita(this)"><span class="icon-pencil"></span></a></td>
+            <td><a onclick="BorrarCita(this)"><span class="icon-trash"></span></a></td>
+            <td style="display:none;"><input type="text" id="diagnostico-id" value="0" /></td>
+            <td style="display:none;"><input type="text" id="diagnostico-Numero" value="0" /></td>
+            <td style="display:none;"><input type="text" id="diagnostico-NumeroTipoId" value="0" /></td>
+            <td style="display:none;"><input type="text" id="diagnostico-Repeticion" value="0" /></td>
+            <td style="display:none;"><input type="text" id="diagnostico-RepeticionTipoId" value="0" /></td>
+            <td style="display:none;"><input type="text" id="diagnostico-status" value="2" /></td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="alert" role="alert" style="display:none;">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+    <span></span>
+</div>
+
+<div id="Loading" style="display:none;">
+    <img src="~/Content/Images/loading.gif" />
+</div>
+
+@section scripts{
+    <script src="~/Scripts/JqueryFormValidate.js"></script>
+    <script src="~/Scripts/FormValidateSecurity.js"></script>
+    <link href="~/Content/Themes/FormValidatorTheme.css" rel="stylesheet" type="text/css" />
+
+
+    <script>
+        var xhr = null;
+        var temp = null;
+
+        $.validate({
+            modules: 'security'
+        });
+
+        $('form').submit(function (event) {
+
+            event.preventDefault();
+
+            ValidarFormulario();
+        });
+
+        function ValidarFormulario() {
+            if ($("#tabla-diagnosticos #DxDescripcion").length == 0) {
+                $("#message").show().html("Debe ingresar un Diagnóstico");
+                return;
+            }
+
+            if ($("#tabla-citas #CitaDescripcion").length == 0) {
+                $("#message").show().html("Debe ingresar una Cita");
+                return;
+            }
+
+
+            var valid = true;
+
+            for (i = 0; i < $("#tabla-diagnosticos tbody tr").length; i++) {
+                if ($($("#tabla-diagnosticos #DxDescripcion")[i]).html() == "")
+                    valid = false;
+
+                if ($($("#tabla-diagnosticos #DxControl")[i]).html() == "")
+                    valid = false;
+            }
+
+            for (i = 0; i < $("#tabla-citas tbody tr").length; i++) {
+                if ($($("#tabla-citas #CitaDescripcion")[i]).html() == "")
+                    valid = false;
+            }
+
+            if (valid) {
+                EnviarFormulario();
+            } else {
+                $("#message").show().html("Faltan datos por ingresar");
+            }
+        }
+
+        function EnviarFormulario() {
+            var Data = {
+
+            };
+
+            var width = $(window).width();
+            var height = $(window).height();
+            $("#Loading").show().css("width", width + "px").css("height", height + "px");
+            $("#Loading > img").css("margin-left", ((width - 200) / 2) + "px").css("margin-top", ((height - 266) / 2) + "px");
+
+            $.ajax({
+                cache: false,
+                dataType: 'json',
+                method: 'POST',
+                data: Data,
+                url: '/PlanDeVida/EnviarPlanDeVida',
+                success: function (json) {
+                    $("#Loading").hide();
+                    if (json) {
+                        alerta("Componente guardado!", "verde");
+                        $("#myModal").modal("toggle");
+                        UpdatePanel();
+                    } else {
+                        alerta("No se pudo Guardar el Componente", "rojo");
+                    }
+                },
+                error: function (error) {
+                    alerta("Sucedió un error al conectarse al servidor", "rojo");
+                    $("#Loading").hide();
+                    console.log(error);
+                }
+            });
+        }
+
+        function soloLetras(e) {
+            if ((e.keyCode > 64 && e.keyCode < 91) || (e.keyCode > 96 && e.keyCode < 123) || e.keyCode == 241 || e.keyCode == 209 || e.keyCode == 32) {
+                console.log("aceptado");
+            } else {
+                e.preventDefault();
+            }
+        }
+
+        function CambioNombrePadre() {
+            if ($("#StatusPlan").val() == 1)
+                $("#StatusPlan").val(3);
+        }
+
+        function NuevoDiagnostico() {
+            if ($("#tabla-diagnosticos tbody #tr-eliminar").length > 0)
+                $("#tabla-diagnosticos tbody #tr-eliminar").remove();
+
+            $("#tabla-diagnosticos tbody").append($("#tabla-nuevo-diagnostico tbody").html());
+        }
+
+        function ObtenerDx(input) {
+            if ($(input).parent().parent().children().children("#diagnostico-status").val() == 1)
+                $(input).parent().parent().children().children("#diagnostico-status").val(3);
+
+            if ($(input).val().trim().length > 0) {
+                if (xhr && xhr.readyState != 4)
+                    xhr.abort();
+
+                xhr = $.ajax({
+                    cache: false,
+                    dataType: 'json',
+                    method: 'POST',
+                    data: { data: $(input).val().trim() },
+                    url: "/PlanesDeVida/ObtenerDxConCIE10",
+                    success: function (json) {
+                        $(input).parent().parent().children("#DxDescripcion").html(json);
+                    },
+                    error: function () {
+                        $(input).parent().parent().children("#DxDescripcion").html("");
+                    }
+                });
+            } else {
+                $(input).parent().parent().children("#DxDescripcion").html("");
+            }
+        }
+
+        function EditarControl(campo) {
+            temp = campo;
+            $("#myModal").modal();
+            $("#myModal .modal-title").html("Editar Control");
+            $("#myModal select").val(-1);
+            $("#myModal input").val("");
+            $("#PopupAceptar").attr("onclick", "InsertarControl()");
+        }
+
+        function InsertarControl() {
+            var valid = true;
+            if ($("#myModal #tipoControl").val().trim() == "") {
+                $("#myModal #tipoControl").css("border-color", "red");
+                valid = false;
+            }
+            if ($("#myModal #inputCada").val().trim() == "") {
+                $("#myModal #inputCada").css("border-color", "red");
+                valid = false;
+            }
+            if ($("#myModal #inputDurante").val().trim() == "") {
+                $("#myModal #inputDurante").css("border-color", "red");
+                valid = false;
+            }
+            if ($("#myModal #select1").val() == -1) {
+                $("#myModal #select1").css("border-color", "red");
+                valid = false;
+            }
+            if ($("#myModal #select2").val() == -1) {
+                $("#myModal #select2").css("border-color", "red");
+                valid = false;
+            }
+
+            if (valid) {
+                $(temp).parent().parent().children("#DxControl").html("Control de " + $("#myModal #tipoControl").val() + " cada " + $("#myModal #inputCada").val() + " " + $("#myModal #select1 option:selected").html() + " durante " + $("#myModal #inputDurante").val() + " " + $("#myModal #select2 option:selected").html());
+                $("#myModal").modal("toggle");
+                $(temp).parent().parent().children().children("#diagnostico-Numero").val($("#myModal #inputCada").val());
+                $(temp).parent().parent().children().children("#diagnostico-NumeroTipoId").val($("#myModal #select1").val());
+                $(temp).parent().parent().children().children("#diagnostico-Repeticion").val($("#myModal #inputDurante").val());
+                $(temp).parent().parent().children().children("#diagnostico-RepeticionTipoId").val($("#myModal #select2").val());
+                if ($(temp).parent().parent().children().children("#diagnostico-status").val() == 1)
+                    $(temp).parent().parent().children().children("#diagnostico-status").val(3);
+            }
+        }
+
+        function BorrarDiagnostico(campo) {
+            if ($(campo).parent().parent().children().children("#diagnostico-status").val() == 2) {
+                $(campo).parent().parent().remove();
+            } else if ($(campo).parent().parent().children().children("#diagnostico-status").val() != 4) {
+                $(campo).parent().parent().children().children("#diagnostico-status").val(4);
+                $(campo).parent().parent().children().children("a").attr("onclick", "");
+                $(campo).parent().parent().addClass("Suspendido");
+            }
+        }
+
+        function NuevaCita() {
+            if ($("#tabla-citas tbody #tr-eliminar").length > 0)
+                $("#tabla-citas tbody #tr-eliminar").remove();
+
+            $("#tabla-citas tbody").append($("#tabla-nueva-cita tbody").html());
+        }
+
+        function EditarCita(campo) {
+            temp = campo;
+            $("#myModal").modal();
+            $("#myModal .modal-title").html("Editar Cita");
+            $("#myModal select").val(-1);
+            $("#myModal input").val("");
+            $("#PopupAceptar").attr("onclick", "InsertarCita()");
+        }
+
+        function InsertarCita() {
+            var valid = true;
+            if ($("#myModal #tipoControl").val().trim() == "") {
+                $("#myModal #tipoControl").css("border-color", "red");
+                valid = false;
+            }
+            if ($("#myModal #inputCada").val().trim() == "") {
+                $("#myModal #inputCada").css("border-color", "red");
+                valid = false;
+            }
+            if ($("#myModal #inputDurante").val().trim() == "") {
+                $("#myModal #inputDurante").css("border-color", "red");
+                valid = false;
+            }
+            if ($("#myModal #select1").val() == -1) {
+                $("#myModal #select1").css("border-color", "red");
+                valid = false;
+            }
+            if ($("#myModal #select2").val() == -1) {
+                $("#myModal #select2").css("border-color", "red");
+                valid = false;
+            }
+
+            if (valid) {
+                $(temp).parent().parent().children("#CitaDescripcion").html("Interconsulta al " + $("#myModal #tipoControl").val() + " cada " + $("#myModal #inputCada").val() + " " + $("#myModal #select1 option:selected").html() + " durante " + $("#myModal #inputDurante").val() + " " + $("#myModal #select2 option:selected").html());
+                $("#myModal").modal("toggle");
+                $(temp).parent().parent().children().children("#diagnostico-Numero").val($("#myModal #inputCada").val());
+                $(temp).parent().parent().children().children("#diagnostico-NumeroTipoId").val($("#myModal #select1").val());
+                $(temp).parent().parent().children().children("#diagnostico-Repeticion").val($("#myModal #inputDurante").val());
+                $(temp).parent().parent().children().children("#diagnostico-RepeticionTipoId").val($("#myModal #select2").val());
+                if ($(temp).parent().parent().children().children("#diagnostico-status").val() == 1)
+                    $(temp).parent().parent().children().children("#diagnostico-status").val(3);
+            }
+        }
+
+        function BorrarCita(campo) {
+            if ($(campo).parent().parent().children().children("#diagnostico-status").val() == 2) {
+                $(campo).parent().parent().remove();
+            } else if ($(campo).parent().parent().children().children("#diagnostico-status").val() != 4) {
+                $(campo).parent().parent().children().children("#diagnostico-status").val(4);
+                $(campo).parent().parent().children().children("a").attr("onclick", "");
+                $(campo).parent().parent().addClass("Suspendido");
+            }
+        }
+    </script>
+}

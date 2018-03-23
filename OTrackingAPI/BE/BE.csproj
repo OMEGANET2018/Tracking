@@ -60,6 +60,10 @@
     <Compile Include="Administracion\ServicioComponente.cs" />
     <Compile Include="Acceso\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Seguimiento\CIE10.cs" />
+    <Compile Include="Seguimiento\Cita.cs" />
+    <Compile Include="Seguimiento\DiagnosticoPlanDeVida.cs" />
+    <Compile Include="Seguimiento\PlanDeVida.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -2,6 +2,7 @@
 using BE.Acceso;
 using BE.Persona;
 using BE.Administracion;
+using BE.Seguimiento;
 using System.Data.Entity;
 
 namespace DAL
@@ -22,5 +23,9 @@ namespace DAL
         public DbSet<Perfil> Perfiles { get; set; }
         public DbSet<Parametro> Parametros { get; set; }
         public DbSet<Empresa> Empresas { get; set; }
+        public DbSet<PlanDeVida> PlanesDeVida { get; set; }
+        public DbSet<tblCIE10> CIE10 { get; set; }
+        public DbSet<DiagnosticoPlanDeVida> DiagnosticoPlanesDeVida { get; set; }
+        public DbSet<Cita> Citas { get; set; }
     }
 }
