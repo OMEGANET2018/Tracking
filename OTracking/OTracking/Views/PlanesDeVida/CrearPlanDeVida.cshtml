@@ -170,7 +170,39 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr id="tr-eliminar"><td colspan="4">No hay campos agregados</td></tr>
+                                        @{ 
+                                            if (ViewBag.PlanDeVida == null)
+                                            {
+                                                <tr id="tr-eliminar"><td colspan="4">No hay campos agregados</td></tr>
+                                            }
+                                            else
+                                            {
+                                                if(ViewBag.PlanDeVida.Diagnosticos.Count == 0)
+                                                {
+                                                    <tr id="tr-eliminar"><td colspan="4">No hay campos agregados</td></tr>
+                                                }
+                                                else
+                                                {
+                                                    foreach (OTracking.Models.Comun.DiagnosticoPlanesDeVida D in ViewBag.PlanDeVida.Diagnosticos)
+                                                    {
+                                                        <tr>
+                                                            <td><input type="text" id="CIE10" onkeyup="ObtenerDx(this)" value="@D.CIE10"/></td>
+                                                            <td id="DxDescripcion">@D.Diagnostico</td>
+                                                            <td id="DxControl">@D.Control</td>
+                                                            <td><a onclick="EditarControl(this)"><span class="icon-pencil"></span></a></td>
+                                                            <td><a onclick="BorrarDiagnostico(this)"><span class="icon-trash"></span></a></td>
+                                                            <td style="display:none;"><input type="text" id="diagnostico-id" value="@D.DiagnosticoId" /></td>
+                                                            <td style="display:none;"><input type="text" id="diagnostico-Numero" value="@(D.ControlNumero.HasValue ? D.ControlNumero.Value.ToString() : "")" /></td>
+                                                            <td style="display:none;"><input type="text" id="diagnostico-NumeroTipoId" value="@(D.ControlNumeroTipoId.HasValue ? D.ControlNumeroTipoId.Value.ToString() : "")" /></td>
+                                                            <td style="display:none;"><input type="text" id="diagnostico-Repeticion" value="@(D.ControlRepeticion.HasValue ? D.ControlRepeticion.Value.ToString() : "")" /></td>
+                                                            <td style="display:none;"><input type="text" id="diagnostico-RepeticionTipoId" value="@(D.ControlRepeticionTipoId.HasValue ? D.ControlRepeticionTipoId.Value.ToString() : "")" /></td>
+                                                            <td style="display:none;"><input type="text" id="diagnostico-status" value="@D.StatusId" /></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        
                                     </tbody>
                                 </table>
                             </div>
@@ -193,7 +225,36 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr id="tr-eliminar"><td colspan="4">No hay campos agregados</td></tr>
+                                        @{ 
+                                            if (ViewBag.PlanDeVida == null)
+                                            {
+                                                <tr id="tr-eliminar"><td colspan="4">No hay campos agregados</td></tr>
+                                            }
+                                            else
+                                            {
+                                                if(ViewBag.PlanDeVida.Citas.Count == 0)
+                                                {
+                                                    <tr id="tr-eliminar"><td colspan="4">No hay campos agregados</td></tr>
+                                                }
+                                                else
+                                                {
+                                                    foreach (OTracking.Models.Comun.CitaPlanesDeVida C in ViewBag.PlanDeVida.Citas)
+                                                    {
+                                                        <tr>
+                                                            <td id="CitaDescripcion">@C.Consulta</td>
+                                                            <td><a onclick="EditarCita(this)"><span class="icon-pencil"></span></a></td>
+                                                            <td><a onclick="BorrarCita(this)"><span class="icon-trash"></span></a></td>
+                                                            <td style="display:none;"><input type="text" id="diagnostico-id" value="@C.CitaId" /></td>
+                                                            <td style="display:none;"><input type="text" id="diagnostico-Numero" value="@(C.Numero.HasValue ? C.Numero.Value.ToString() : "")" /></td>
+                                                            <td style="display:none;"><input type="text" id="diagnostico-NumeroTipoId" value="@(C.NumeroTipoId.HasValue ? C.NumeroTipoId.Value.ToString() : "")" /></td>
+                                                            <td style="display:none;"><input type="text" id="diagnostico-Repeticion" value="@(C.Repeticion.HasValue ? C.Repeticion.Value.ToString() : "")" /></td>
+                                                            <td style="display:none;"><input type="text" id="diagnostico-RepeticionTipoId" value="@(C.RepeticionTipoId.HasValue ? C.RepeticionTipoId.Value.ToString() : "")" /></td>
+                                                            <td style="display:none;"><input type="text" id="diagnostico-status" value="@C.StatusId" /></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            }
+                                        }      
                                     </tbody>
                                 </table>
                             </div>
@@ -256,7 +317,7 @@
 <table id="tabla-nuevo-diagnostico" style="display:none;">
     <tbody>
         <tr>
-            <td><input type="text" onkeyup="ObtenerDx(this)" /></td>
+            <td><input type="text" id="CIE10" onkeyup="ObtenerDx(this)" /></td>
             <td id="DxDescripcion"></td>
             <td id="DxControl"></td>
             <td><a onclick="EditarControl(this)"><span class="icon-pencil"></span></a></td>
@@ -353,8 +414,42 @@
 
         function EnviarFormulario() {
             var Data = {
-
+                Nombre: $("#NombrePlan").val(),
+                PlanDeVidaId: $("#IdPlan").val(),
+                StatusId: $("#StatusPlan").val(),
+                Diagnosticos: new Array(),
+                Citas: new Array()
             };
+
+            for (i = 0; i < $("#tabla-diagnosticos tbody tr").length; i++) {
+                var Dx = {
+                    DiagnosticoId: $($("#tabla-diagnosticos tbody tr")[i]).children().children("#diagnostico-id").val(),
+                    CIE10: $($("#tabla-diagnosticos tbody tr")[i]).children().children("#CIE10").val(),
+                    Diagnostico: $($("#tabla-diagnosticos tbody tr")[i]).children("#DxDescripcion").html(),
+                    Control: $($("#tabla-diagnosticos tbody tr")[i]).children("#DxControl").html(),
+                    ControlNumero: $($("#tabla-diagnosticos tbody tr")[i]).children().children("#diagnostico-Numero").val(),
+                    ControlNumeroTipoId: $($("#tabla-diagnosticos tbody tr")[i]).children().children("#diagnostico-NumeroTipoId").val(),
+                    ControlRepeticion: $($("#tabla-diagnosticos tbody tr")[i]).children().children("#diagnostico-Repeticion").val(),
+                    ControlRepeticionTipoId: $($("#tabla-diagnosticos tbody tr")[i]).children().children("#diagnostico-RepeticionTipoId").val(),
+                    StatusId: $($("#tabla-diagnosticos tbody tr")[i]).children().children("#diagnostico-status").val()
+                };
+
+                Data.Diagnosticos.push(Dx);
+            }
+
+            for (i = 0; i < $("#tabla-citas tbody tr").length; i++) {
+                var Cita = {
+                    CitaId: $($("#tabla-citas tbody tr")[i]).children().children("#diagnostico-id").val(),
+                    Consulta: $($("#tabla-citas tbody tr")[i]).children("#CitaDescripcion").html(),
+                    Numero: $($("#tabla-citas tbody tr")[i]).children().children("#diagnostico-Numero").val(),
+                    NumeroTipoId: $($("#tabla-citas tbody tr")[i]).children().children("#diagnostico-NumeroTipoId").val(),
+                    Repeticion: $($("#tabla-citas tbody tr")[i]).children().children("#diagnostico-Repeticion").val(),
+                    RepeticionTipoId: $($("#tabla-citas tbody tr")[i]).children().children("#diagnostico-RepeticionTipoId").val(),
+                    StatusId: $($("#tabla-citas tbody tr")[i]).children().children("#diagnostico-status").val()
+                };
+
+                Data.Citas.push(Cita);
+            }
 
             var width = $(window).width();
             var height = $(window).height();
@@ -366,15 +461,14 @@
                 dataType: 'json',
                 method: 'POST',
                 data: Data,
-                url: '/PlanDeVida/EnviarPlanDeVida',
+                url: '/PlanesDeVida/EnviarPlanDeVida',
                 success: function (json) {
                     $("#Loading").hide();
                     if (json) {
-                        alerta("Componente guardado!", "verde");
-                        $("#myModal").modal("toggle");
-                        UpdatePanel();
+                        alerta("Plan guardado!", "verde");
+                        setInterval(function () { location.href = '@Url.Action("BandejaPlanesDeVida","PlanesDeVida")' }, 2000);
                     } else {
-                        alerta("No se pudo Guardar el Componente", "rojo");
+                        alerta("No se pudo Guardar el Plan", "rojo");
                     }
                 },
                 error: function (error) {

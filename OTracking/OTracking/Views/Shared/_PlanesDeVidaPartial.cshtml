@@ -5,13 +5,13 @@
     int Ultimo = 0;
     int Index = 0;
 
-    if (ViewBag.Usuarios != null)
+    if (ViewBag.PlanesDeVida != null)
     {
-        Take = ViewBag.Usuarios.Take;
-        Index = ViewBag.Usuarios.Index;
-        Total = ViewBag.Usuarios.TotalRegistros;
+        Take = ViewBag.PlanesDeVida.Take;
+        Index = ViewBag.PlanesDeVida.Index;
+        Total = ViewBag.PlanesDeVida.TotalRegistros;
         Primer = ((Index - 1) * Take) + 1;
-        Ultimo = Primer + (ViewBag.Usuarios.Lista.Count - 1);
+        Ultimo = Primer + (ViewBag.PlanesDeVida.Lista.Count - 1);
 
         Primer = Primer < 0 ? 0 : Primer;
         Ultimo = Ultimo < 0 ? 0 : Ultimo;
@@ -22,10 +22,26 @@
     }
 }
 
+<style>
+    .Titulo{
+        font-size:24px;
+    }
+    .Titulo button {
+        cursor: pointer;
+        display: inline-block;
+        height:30px;
+        width:100px;
+        padding: 1px 12px 6px;
+    }
+    .SubTitulo {
+        font-size: 20px;
+    }
+</style>
+
 <div class="container-fluid" style="padding:0px;">
     <div class="box box-default mt-2" id="acordion">
         <div class="box-header with-border" id="heading1">
-            <h3 class="box-title" style="cursor:pointer;" onclick="ColapsarTabla('table-responsive')"><i class="icon-list-numbered"></i> Planes De Vida </h3>
+            <h3 class="box-title" style="cursor:pointer;"><i class="icon-list-numbered"></i> Planes De Vida </h3>
         </div>
     </div>
 </div>
@@ -33,66 +49,91 @@
     <span class="informacion">Mostrando desde N° @Primer hasta @Ultimo de un total de @Total entradas</span>
     <div class="float-lg-right">
         Total de registros:
-        <select id="take" onchange="FiltrarUsuarios(1)">
-            <option value="10" @(Take == 10 ? "selected" : "")>10</option>
-            <option value="25" @(Take == 25 ? "selected" : "")>25</option>
-            <option value="50" @(Take == 50 ? "selected" : "")>50</option>
+        <select id="take" onchange="Filtrar(1)">
+            <option value="3" @(Take == 3 ? "selected" : "")>3</option>
+            <option value="6" @(Take == 6 ? "selected" : "")>6</option>
+            <option value="9" @(Take == 9 ? "selected" : "")>9</option>
             <option value="0" @(Take == 0 ? "selected" : "")>TODOS</option>
         </select>
     </div>
 </div>
 <div class="box box-warning mt-2">
     <div class="table-responsive">
-        <table class="table table-hover" id="TablaAExportar">
-            <thead>
-                <tr>
-                    <th>Nombre Usuario</th>
-                    <th>Nombre Persona</th>
-                    <th class="hidden-xs">Rol</th>
-                    <th>Empresa</th>
-                    <th class="hidden-xs">Tipo Empresa</th>
-                    <th class="NoImprimir">Editar</th>
-                    <th class="NoImprimir">Eliminar</th>
-                </tr>
-            </thead>
-            <tbody>
                 @{
-                    if (ViewBag.Usuarios == null)
+                    if (ViewBag.PlanesDeVida == null)
                     {
-                        <tr><td colspan="7" class="text-center">Error al conectarse al servidor</td></tr>
+                        <div class="SubTitulo col-12 text-center">Error al conectarse al servidor</div>
                     }
-                    else if (ViewBag.Usuarios.Lista.Count == 0)
+                    else if (ViewBag.PlanesDeVida.Lista.Count == 0)
                     {
-                        <tr><td colspan="7" class="text-center">No hay resultados</td></tr>
+                        <div class="SubTitulo col-12 text-center">No hay resultados</div>
                     }
                     else
                     {
-                        foreach (var item in ViewBag.Usuarios.Lista)
+
+                        foreach (OTracking.Models.Comun.PlanesDeVida PDV in ViewBag.PlanesDeVida.Lista)
                         {
-                            <tr>
-                                <td>@item.NombreUsuario</td>
-                                <td>@item.NombreCompleto</td>
-                                <td class="hidden-xs">@item.Rol</td>
-                                <td>@item.Empresa</td>
-                                <td class="hidden-xs">@item.TipoEmpresa</td>
-                                <td class="NoImprimir"><a href="@Url.Action("CrearUsuario","Acceso",new {id = item.UsuarioId })"><span class="icon-edit"></span></a></td>
-                                <td class="NoImprimir"><a onclick="DeleteUser(@item.UsuarioId)"><span class="icon-trash"></span></a></td>
-                            </tr>
+                            <div class="Titulo col-12">
+                                @PDV.Nombre 
+                                <button class="btn-warning boton form-control" onclick="location.href='@Url.Action("CrearPlanDeVida","PlanesDeVida",new { id = PDV.PlanDeVidaId})'">
+                                    <i class="fa fa-search"></i> Editar
+                                </button>
+                                <button class="btn-warning boton form-control" onclick="Delete(@PDV.PlanDeVidaId)">
+                                    <i class="fa fa-search"></i> Eliminar
+                                </button>
+                            </div>
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <td>Diagnóstico</td>
+                                        <td>CIE10</td>
+                                        <td>Controles</td>
+                                        <td>Citas</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ 
+                                        int index = 0;
+                                        foreach(OTracking.Models.Comun.DiagnosticoPlanesDeVida DPDV in PDV.Diagnosticos)
+                                        {
+                                            <tr>
+                                                <td>@DPDV.Diagnostico</td>
+                                                <td>@DPDV.CIE10</td>
+                                                <td>@DPDV.Control</td>
+                                                @{ 
+                                                    if(index == 0)
+                                                    {
+                                                        <td rowspan="@PDV.Diagnosticos.Count">
+                                                            @{ 
+                                                                foreach(OTracking.Models.Comun.CitaPlanesDeVida CPDV in PDV.Citas)
+                                                                {
+                                                                    <span>- @CPDV.Consulta </span><br/>
+                                                                }
+                                                            }
+                                                        </td>
+                                                    }
+                                                    index++;
+                                                }
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
                         }
                     }
                 }
-            </tbody>
-        </table>
+
+
         <div class="paginacion-tabla d-flex justify-content-center">
             <div>
                 <ul class="pagination">
                     @{
                         if (Index > 1)
                         {
-                            <li class="page-item" onclick="FiltrarUsuarios(1)">
+                            <li class="page-item" onclick="Filtrar(1)">
                                 <span class="page-link" aria-hidden="true">Primero</span>
                             </li>
-                            <li class="page-item" onclick="FiltrarUsuarios(@(Index - 1))">
+                            <li class="page-item" onclick="Filtrar(@(Index - 1))">
                                 <span class="page-link" aria-hidden="true">Anterior</span>
                             </li>
                         }
@@ -104,17 +145,17 @@
                                 pagina++;
                                 if ((pagina > (Index - 5)) && pagina < (Index + 5))
                                 {
-                                    <li @(pagina == Index ? "class=pagination-active" : "onclick=FiltrarUsuarios(" + pagina + ")")><span class="page-link" aria-hidden="true">@pagina</span></li>
+                                    <li @(pagina == Index ? "class=pagination-active" : "onclick=Filtrar(" + pagina + ")")><span class="page-link" aria-hidden="true">@pagina</span></li>
                                 }
 
                             }
                         }
                         if (pagina > Index)
                         {
-                            <li class="page-item" onclick="FiltrarUsuarios(@(Index + 1))">
+                            <li class="page-item" onclick="Filtrar(@(Index + 1))">
                                 <span class="page-link" aria-hidden="true">Siguiente</span>
                             </li>
-                            <li class="page-item" onclick="FiltrarUsuarios(@(pagina))">
+                            <li class="page-item" onclick="Filtrar(@(pagina))">
                                 <span class="page-link" aria-hidden="true">Ultimo</span>
                             </li>
                         }

@@ -15,5 +15,26 @@ namespace OTrackingAPI.Controllers.Administracion
             List<Dropdownlist> result = ER.GetEmpresas();
             return Ok(result);
         }
+
+        [HttpGet]
+        public IHttpActionResult GetTipoEmpresa()
+        {
+            List<Dropdownlist> result = ER.GetTipoEmpresa();
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public IHttpActionResult GetEmpresaPorId(int id)
+        {
+            BandejaProveedoresLista result = ER.GetEmpresaPorId(id);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public IHttpActionResult FiltrarEmpresa(BandejaProveedores data)
+        {
+            var result = ER.FiltrarEmpresa(data);
+            return Ok();
+        }
     }
 }

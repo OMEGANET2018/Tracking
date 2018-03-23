@@ -113,9 +113,7 @@ namespace BL.Acceso
                              R.GrupoId == GrupoRol &&
                              TE.GrupoId == GrupoEmpresa &&
                              U.NombreUsuario.Contains(NombreUsuario) &&
-                             (P.Nombres.Contains(NombrePersona) ||
-                             P.ApellidoPaterno.Contains(NombrePersona) ||
-                             P.ApellidoMaterno.Contains(NombrePersona))
+                             (P.Nombres + " " + P.ApellidoPaterno + " " + P.ApellidoMaterno).Contains(NombrePersona)
                              select new BandejaUsuarioLista()
                              {
                                  UsuarioId = U.UsuarioId,

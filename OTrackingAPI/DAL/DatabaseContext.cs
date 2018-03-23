@@ -26,6 +26,6 @@ namespace DAL
         public DbSet<PlanDeVida> PlanesDeVida { get; set; }
         public DbSet<tblCIE10> CIE10 { get; set; }
         public DbSet<DiagnosticoPlanDeVida> DiagnosticoPlanesDeVida { get; set; }
-        public DbSet<Cita> Citas { get; set; }
+        public DbSet<CitaPlanDeVida> CitaPlanesDeVida { get; set; }
     }
 }

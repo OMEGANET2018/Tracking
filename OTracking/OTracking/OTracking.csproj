@@ -396,6 +396,9 @@
     <Content Include="Views\PlanesDeVida\BandejaPlanesDeVida.cshtml" />
     <Content Include="Views\Shared\_PlanesDeVidaPartial.cshtml" />
     <Content Include="Views\PlanesDeVida\CrearPlanDeVida.cshtml" />
+    <Content Include="Views\Administracion\Proveedores.cshtml" />
+    <Content Include="Views\Shared\_BandejaProveedoresPartial.cshtml" />
+    <Content Include="Views\Administracion\CrearProveedor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

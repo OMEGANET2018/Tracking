@@ -1,0 +1,415 @@
+﻿@{
+    int TipoDocumentoId = 0;
+    string NroDocumento = "";
+    string Nombres = "";
+    string ApellidoPaterno = "";
+    string ApellidoMaterno = "";
+    DateTime? FechaNacimiento = null;
+    int GeneroId = 0;
+    string CorreoElectronico = "";
+    string NumeroCelular = "";
+    int PersonaId = 0;
+
+    string NombreUsuario = "";
+    int EmpresaId = 0;
+    int RolId = 0;
+    string PreguntaSecreta = "";
+    int UsuarioId = 0;
+
+
+    if (ViewBag.EditUser != null && ViewBag.EditPerson != null)
+    {
+        TipoDocumentoId = ViewBag.EditPerson.TipoDocumentoId;
+        NroDocumento = ViewBag.EditPerson.NroDocumento;
+        Nombres = ViewBag.EditPerson.Nombres;
+        ApellidoPaterno = ViewBag.EditPerson.ApellidoPaterno;
+        ApellidoMaterno = ViewBag.EditPerson.ApellidoMaterno;
+        FechaNacimiento = ViewBag.EditPerson.FechaNacimiento;
+        GeneroId = ViewBag.EditPerson.GeneroId;
+        CorreoElectronico = ViewBag.EditPerson.Correo;
+        NumeroCelular = ViewBag.EditPerson.Telefono;
+        PersonaId = ViewBag.EditPerson.PersonaId;
+
+        NombreUsuario = ViewBag.EditUser.NombreUsuario;
+        EmpresaId = ViewBag.EditUser.EmpresaId;
+        RolId = ViewBag.EditUser.RolId;
+        PreguntaSecreta = ViewBag.EditUser.PreguntaSecreta;
+        UsuarioId = ViewBag.EditUser.UsuarioId;
+    }
+}
+
+
+<style>
+    .Titulo {
+        font-weight: bolder;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .SubTitulo {
+        margin-top: 20px;
+    }
+
+    select {
+        width: 186px;
+        height: 28px;
+    }
+
+    .IconoMas {
+        cursor: pointer;
+        width: 20px;
+        float: right;
+    }
+
+    .botonera {
+        margin: 60px 0px;
+    }
+
+        .botonera > div {
+            display: inline-block;
+            margin-left: 30px;
+            width: 150px;
+            margin-top: 20px;
+        }
+
+            .botonera > div > input {
+                width: 150px;
+                height: 38px;
+                cursor: pointer;
+            }
+
+    #Loading {
+        background-color: rgba(0, 0, 0, 0.60);
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        z-index: 9999;
+    }
+
+        #Loading > img {
+            width: 200px;
+        }
+
+    #Accordion-Container {
+        overflow: hidden;
+        height: 0px;
+    }
+
+    .border {
+        border: 1px solid black;
+        border-radius: 20px;
+        margin: 40px 20px 0px;
+        padding: 20px;
+    }
+
+    input, select {
+        width: 100%;
+        max-width: 100%;
+        height: 38px;
+    }
+</style>
+
+<form style="width:100%;">
+    <div class="container-fluid">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-12 col-md-5 border">
+                    <div class="row">
+                        <div class="col-12 Titulo">Datos de Persona</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo">Tipo Documento: </div>
+                            <div>
+                                @{
+                                    if (ViewBag.TipoDocumento != null)
+                                    {
+                                        <select id="PersonaTipoDocumento" data-validation="number" data-validation-allowing="range[1;100]" data-validation-error-msg="Debe seleccionar una opción">
+                                            @foreach (OTracking.Models.Comun.Dropdownlist G in ViewBag.TipoDocumento)
+                                            {
+                                                <option value="@G.Id" @(TipoDocumentoId == G.Id ? "selected" : "")>@G.Value</option>
+                                            }
+                                        </select>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo">Numero Documento: </div>
+                            <div><input type="text" id="PersonaNroDocumento" value="@NroDocumento" data-validation="length" data-validation-length="8-50" data-validation-error-msg="El Documento debe de tener entre 8 y 50 caracteres" /></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo">Nombres: </div>
+                            <div><input type="text" id="PersonaNombre" value="@Nombres" data-validation="length" data-validation-length="3-150" data-validation-error-msg="El Nombre debe de tener entre 3 y 150 caracteres" onkeypress="soloLetras(event)" /></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo">Apellido Paterno: </div>
+                            <div><input type="text" id="PersonaApellidoPaterno" value="@ApellidoPaterno" data-validation="length" data-validation-length="3-150" data-validation-error-msg="El Apellido Paterno debe de tener entre 3 y 150 caracteres" onkeypress="soloLetras(event)" /></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo">Apellido Materno: </div>
+                            <div><input type="text" id="PersonaApellidoMaterno" value="@ApellidoMaterno" data-validation="length" data-validation-length="3-150" data-validation-error-msg="El Apellido Materno debe de tener entre 3 y 150 caracteres" onkeypress="soloLetras(event)" /></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo">Fecha Nacimiento: </div>
+                            <div><input type="date" id="PersonaFechaNacimiento" data-validation="date" value="@(FechaNacimiento.HasValue ? FechaNacimiento.Value.ToString("yyyy-MM-dd") : "")" /></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo">Género: </div>
+                            <div>
+                                @{
+                                    if (ViewBag.Genero != null)
+                                    {
+                                        <select id="PersonaGenero">
+                                            @foreach (OTracking.Models.Comun.Dropdownlist G in ViewBag.Genero)
+                                            {
+                                                <option value="@G.Id" @(GeneroId == G.Id ? "selected" : "")>@G.Value</option>
+                                            }
+                                        </select>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo">Correo: </div>
+                            <div><input type="email" id="PersonaCorreo" value="@CorreoElectronico" data-validation="email length" data-validation-length="max150" /></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo">Teléfono Celular: </div>
+                            <div><input type="tel" id="PersonaCelular" value="@NumeroCelular" data-validation="length" data-validation-length="max50" data-validation-optional="true" /></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-5 border">
+                    <div class="row">
+                        <div class="col-12 Titulo">Datos de Usuario</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo">Usuario: </div>
+                            <div><input type="text" id="UserName" value="@NombreUsuario" data-validation="length" data-validation-length="8-50" data-validation-error-msg="El Usuario debe de tener entre 8 y 50 caracteres" /></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo">Contraseña: </div>
+                            <div><input type="password" id="UserPassword" name="UserPassword" @(UsuarioId == 0 ? "data-validation=length data-validation-length=8-50" : "data-validation=length data-validation-length=8-50 data-validation-optional=true") data-validation-error-msg="La Contraseña debe de tener entre 8 y 50 caracteres" /></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo">Confirmar Contraseña: </div>
+                            <div><input type="password" id="UserRepeatPassword" data-validation="confirmation" data-validation-confirm="UserPassword" data-validation-error-msg="La Contraseña no coincide" /></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo">Empresa: </div>
+                            <div>
+                                @{
+                                    if (ViewBag.Empresas != null)
+                                    {
+                                        <select id="UserEmpresa" data-validation="number" data-validation-allowing="range[1;100]" data-validation-error-msg="Debe seleccionar una opción">
+                                            @foreach (OTracking.Models.Comun.Dropdownlist R in ViewBag.Empresas)
+                                            {
+                                                <option value="@R.Id" @(EmpresaId == R.Id ? "selected" : "")>@R.Value</option>
+                                            }
+                                        </select>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="SubTitulo boton-mas">Rol: <img src="~/Content/Images/icon-SignoMas-Naranja.png" class="IconoMas" onclick="AddAccordion('Rol')" /></div>
+                            <div>
+                                @{
+                                    if (ViewBag.Roles != null)
+                                    {
+                                        <select id="UserRol" data-validation="number" data-validation-allowing="range[1;100]" data-validation-error-msg="Debe seleccionar una opción">
+                                            @foreach (OTracking.Models.Comun.Dropdownlist R in ViewBag.Roles)
+                                            {
+                                                <option value="@R.Id">@R.Value</option>
+                                            }
+                                        </select>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12" id="Accordion-Container"></div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-center" style="color:red;display:none;" id="message"></div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-center botonera">
+                <div>
+                    <button class="btn-warning boton form-control" style="cursor:pointer;">
+                        <i class="fa fa-search"></i> Guardar
+                    </button>
+                </div>
+                <div>
+                    <button class="btn-warning boton form-control" onclick="Return(event,'@Url.Action("BandejaUsuarios","Acceso")')" style="cursor:pointer;">
+                        <i class="fa fa-search"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="alert" role="alert" style="display:none;">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+    <span></span>
+</div>
+
+<div id="Loading" style="display:none;">
+    <img src="~/Content/Images/loading.gif" />
+</div>
+@section scripts{
+    <script src="~/Scripts/JqueryFormValidate.js"></script>
+    <script src="~/Scripts/FormValidateSecurity.js"></script>
+    <link href="~/Content/Themes/FormValidatorTheme.css" rel="stylesheet" type="text/css" />
+
+
+    <script>
+
+        $(document).ready(function () {
+            $("#UserRol").val(@(RolId == 0 ? -1 : RolId));
+        });
+
+        $.validate({
+            modules: 'security'
+        });
+
+        $('form').submit(function (event) {
+
+            event.preventDefault();
+
+            EnviarFormulario();
+        });
+
+    function EnviarFormulario() {
+
+        var Persona = {
+            TipoDocumentoId: $("#PersonaTipoDocumento").val(),
+            NroDocumento: $("#PersonaNroDocumento").val(),
+            Nombres: $("#PersonaNombre").val(),
+            ApellidoPaterno: $("#PersonaApellidoPaterno").val(),
+            ApellidoMaterno: $("#PersonaApellidoMaterno").val(),
+            FechaNacimiento: $("#PersonaFechaNacimiento").val(),
+            GeneroId: $("#PersonaGenero").val(),
+            Correo: $("#PersonaCorreo").val(),
+            Telefono: $("#PersonaCelular").val(),
+            PersonaId: @PersonaId
+        };
+
+
+        var Usuario = {
+            NombreUsuario: $("#UserName").val(),
+            Contrasenia: $("#UserPassword").val(),
+            EmpresaId: $("#UserEmpresa").val(),
+            RolId: $("#UserRol").val(),
+            UsuarioId: @UsuarioId
+        };
+
+
+        var data = { Persona: JSON.stringify(Persona), Usuario: JSON.stringify(Usuario) };
+
+        var width = $(window).width();
+        var height = $(window).height();
+
+        $("#Loading").show().css("width", width + "px").css("height", height + "px");
+        $("#Loading > img").css("margin-left", ((width - 200) / 2) + "px").css("margin-top", ((height - 266) / 2) + "px");
+
+        $.ajax({
+            cache: false,
+            dataType: 'json',
+            method: 'POST',
+            data: data,
+            url: '@(ViewBag.EditUser != null && ViewBag.EditPerson != null ? "/Acceso/EditPerson": "/Acceso/InsertNewPerson")',
+            success: function (json) {
+                $("#Loading").hide();
+                if (json) {
+                    location.href = '@Url.Action("BandejaUsuarios","Acceso")';
+                } else{
+                    alerta("No se pudo guardar el usuario", "rojo");
+                }
+            },
+            error: function (error) {
+                alerta("Sucedió un error al conectarse al servidor", "rojo");
+                $("#Loading").hide();
+                console.log(error);
+            }
+        });
+    }
+
+    function Return(e,loc) {
+        e.preventDefault();
+        location.href = loc;
+    }
+
+    function AddAccordion(data) {
+        var width = $(window).width();
+        var height = $(window).height();
+
+        $("#Loading").show().css("width", width + "px").css("height", height + "px");
+        $("#Loading > img").css("margin-left", ((width - 200) / 2) + "px").css("margin-top", ((height - 266) / 2) + "px");
+
+        $.ajax({
+            cache: false,
+            dataType: 'html',
+            method: 'GET',
+            url: '/Acceso/GetAccordion?data=' + data,
+            success: function (html) {
+                $("#Accordion-Container").html(html);
+                $("#Loading").hide();
+                updateAccordionHeight();
+            },
+            error: function (error) {
+                alerta("Sucedió un error al conectarse al servidor", "rojo");
+                $("#Loading").hide();
+                console.log(error);
+            }
+        });
+    }
+
+    function updateAccordionHeight() {
+        setTimeout(function () {
+            $("#Accordion-Container").animate({
+                height: $("#Accordion-Container > .row").height() + "px"
+            }, 600);
+        }, 200);
+        }
+
+    function soloLetras(e) {
+        if ((e.keyCode > 64 && e.keyCode < 91) || (e.keyCode > 96 && e.keyCode < 123) || e.keyCode == 241 || e.keyCode == 209 || e.keyCode == 32) {
+            console.log("aceptado");
+        } else {
+            e.preventDefault();
+        }
+    }
+    </script>
+}
