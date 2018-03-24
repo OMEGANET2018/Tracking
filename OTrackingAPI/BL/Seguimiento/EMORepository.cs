@@ -80,7 +80,7 @@ namespace BL.Seguimiento
                 foreach (var A in return_data)
                 {
                     A.FechaNacimiento = A.FechaNacimiento.HasValue ? (DateTime?)DateTime.Parse(A.FechaNacimiento.Value.ToString("yyyy-MM-ddThh:mm:ss"), System.Globalization.CultureInfo.CurrentCulture,System.Globalization.DateTimeStyles.AssumeUniversal) : null;
-                    A.Edad = A.FechaNacimiento.HasValue ? (int?)DateTime.Now.AddTicks(-A.FechaNacimiento.Value.Ticks).Year : null;
+                    A.Edad = A.FechaNacimiento.HasValue ? (int?)DateTime.UtcNow.AddTicks(-A.FechaNacimiento.Value.Ticks).Year : null;
                 }
 
                 int TotalRegistros = return_data.Count;

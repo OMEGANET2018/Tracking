@@ -173,10 +173,11 @@ namespace BL.Acceso
         {
             try
             {
-                var Usuario = (from a in ctx.Usuarios where a.UsuarioId == DeleteId select a).FirstOrDefault();
+                int NoEliminado = (int)Enumeradores.EsEliminado.No;
+                var Usuario = (from a in ctx.Usuarios where a.UsuarioId == DeleteId && a.EsEliminado == NoEliminado select a).FirstOrDefault();
 
                 Usuario.UsuActualiza = UserId;
-                Usuario.FechaActualiza = DateTime.Now;
+                Usuario.FechaActualiza = DateTime.UtcNow;
                 Usuario.EsEliminado = (int)Enumeradores.EsEliminado.Si;
 
                 int rows = ctx.SaveChanges();
@@ -260,7 +261,7 @@ namespace BL.Acceso
                         PadreParametroId = -1,
                         Orden = orden,
                         EsEliminado = NoEliminado,
-                        FechaGraba = DateTime.Now,
+                        FechaGraba = DateTime.UtcNow,
                         UsuGraba = UserID
                     };
 
@@ -289,7 +290,7 @@ namespace BL.Acceso
                         RolId = Parametro.ParametroId,
                         MenuId = P.MenuId,
                         EsEliminado = NoEliminado,
-                        FechaGraba = DateTime.Now,
+                        FechaGraba = DateTime.UtcNow,
                         UsuGraba = UserID
                     };
 

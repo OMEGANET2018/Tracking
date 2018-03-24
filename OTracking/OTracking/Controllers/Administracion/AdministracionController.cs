@@ -95,7 +95,7 @@ namespace OTracking.Controllers.Administracion
         }
 
         [GeneralSecurity(Rol = "Administracion-Proveedores")]
-        public ActionResult FiltrarUsuario(BandejaProveedores data)
+        public ActionResult FiltrarProveedor(BandejaProveedores data)
         {
             Api API = new Api();
             Dictionary<string, string> arg = new Dictionary<string, string>()
@@ -109,31 +109,43 @@ namespace OTracking.Controllers.Administracion
             return PartialView("_BandejaProveedoresPartial");
         }
 
-        //[GeneralSecurity(Rol = "Administracion-Proveedores")]
-        //public JsonResult DeleteUser(int id)
-        //{
-        //    Api API = new Api();
-        //    Dictionary<string, string> args = new Dictionary<string, string>
-        //    {
-        //        { "Int1", id.ToString() },
-        //        { "Int2", ViewBag.USUARIO.UsuarioId.ToString() }
-        //    };
-        //    bool response = API.Post<bool>("Usuario/DeleteUser", args);
-        //    return Json(response);
-        //}
+        [GeneralSecurity(Rol = "Administracion-Proveedores")]
+        public JsonResult DeleteProveedor(int id)
+        {
+            Api API = new Api();
+            Dictionary<string, string> args = new Dictionary<string, string>
+            {
+                { "Int1", id.ToString() },
+                { "Int2", ViewBag.USUARIO.UsuarioId.ToString() }
+            };
+            bool response = API.Post<bool>("Empresa/DeleteEmpresa", args);
+            return Json(response);
+        }
 
-        //[GeneralSecurity(Rol = "Administracion-Proveedores")]
-        //public JsonResult EditPerson(string Persona, string Usuario)
-        //{
-        //    Api API = new Api();
-        //    Dictionary<string, string> args = new Dictionary<string, string>
-        //    {
-        //        { "String1", Persona },
-        //        { "String2", Usuario },
-        //        { "Int1", ViewBag.USUARIO.UsuarioId.ToString() }
-        //    };
-        //    bool response = API.Post<bool>("Persona/EditPersona", args);
-        //    return Json(response);
-        //}
+        [GeneralSecurity(Rol = "Administracion-Proveedores")]
+        public JsonResult EditProveedor(BandejaProveedoresLista data)
+        {
+            Api API = new Api();
+            Dictionary<string, string> args = new Dictionary<string, string>
+            {
+                { "String1", JsonConvert.SerializeObject(data) },
+                { "Int1", ViewBag.USUARIO.UsuarioId.ToString() }
+            };
+            bool response = API.Post<bool>("Empresa/EditEmpresa", args);
+            return Json(response);
+        }
+
+        [GeneralSecurity(Rol = "Administracion-Proveedores")]
+        public JsonResult InsertNewProveedor(BandejaProveedoresLista proveedor)
+        {
+            Api API = new Api();
+            Dictionary<string, string> args = new Dictionary<string, string>
+            {
+                { "String1", JsonConvert.SerializeObject(proveedor) },
+                { "Int1", ViewBag.USUARIO.UsuarioId.ToString() }
+            };
+            bool response = API.Post<bool>("Empresa/InsertNewEmpresa", args);
+            return Json(response);
+        }
     }
 }

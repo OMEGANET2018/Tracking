@@ -232,6 +232,7 @@
     <Content Include="Content\font\user-plus.ttf" />
     <Content Include="Content\font\user-plus.woff" />
     <Content Include="Content\font\user-plus.woff2" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\FormValidateFile.js" />
     <Content Include="Scripts\FormValidateSecurity.js" />

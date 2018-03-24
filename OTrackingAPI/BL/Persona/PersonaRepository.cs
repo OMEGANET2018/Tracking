@@ -209,7 +209,7 @@ namespace BL.Personas
                 int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
 
                 Persona.UsuGraba = UsuarioID;
-                Persona.FechaGraba = DateTime.Now;
+                Persona.FechaGraba = DateTime.UtcNow;
                 Persona.EsEliminado = NoEsEliminado;
                 Persona.GeneroId = Persona.GeneroId == -1 ? 0 : Persona.GeneroId;
 
@@ -219,9 +219,9 @@ namespace BL.Personas
                 string pass = Usuario.Contrasenia;
 
                 Usuario.UsuGraba = UsuarioID;
-                Usuario.FechaGraba = DateTime.Now;
+                Usuario.FechaGraba = DateTime.UtcNow;
                 Usuario.EsEliminado = NoEsEliminado;
-                Usuario.FechaCaduca = DateTime.Now.AddYears(1);
+                Usuario.FechaCaduca = DateTime.UtcNow.AddYears(1);
                 Usuario.Contrasenia = Utils.Encrypt(Usuario.Contrasenia);
                 Usuario.PersonaId = Persona.PersonaId;
 
@@ -283,7 +283,7 @@ namespace BL.Personas
                 ctxPersona.Correo = Persona.Correo;
                 ctxPersona.Telefono = Persona.Telefono;
                 ctxPersona.UsuActualiza = UsuarioID;
-                ctxPersona.FechaActualiza = DateTime.Now;
+                ctxPersona.FechaActualiza = DateTime.UtcNow;
 
 
                 ctxUsuario.NombreUsuario = Usuario.NombreUsuario;
@@ -295,7 +295,7 @@ namespace BL.Personas
                 //if (Utils.Encrypt(Usuario.RespuestaSecreta) != ctxUsuario.RespuestaSecreta && !string.IsNullOrWhiteSpace(Usuario.RespuestaSecreta))
                 //    ctxUsuario.RespuestaSecreta = Utils.Encrypt(Usuario.RespuestaSecreta);
                 ctxUsuario.UsuActualiza = UsuarioID;
-                ctxUsuario.FechaActualiza = DateTime.Now;
+                ctxUsuario.FechaActualiza = DateTime.UtcNow;
 
 
                 int rows = ctx.SaveChanges();

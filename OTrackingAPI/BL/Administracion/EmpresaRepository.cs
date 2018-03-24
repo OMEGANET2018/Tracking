@@ -1,4 +1,5 @@
 ﻿using BE.Comun;
+using BE.Administracion;
 using DAL;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,6 +117,88 @@ namespace BL.Administracion
             catch(Exception e)
             {
                 return null;
+            }
+        }
+
+        public bool DeleteEmpresa(int empresaid, int userid)
+        {
+            try
+            {
+                int NoEliminado = (int)Enumeradores.EsEliminado.No;
+                var empresa = (from a in ctx.Empresas where a.EmpresaId == empresaid && a.EsEliminado == NoEliminado select a).FirstOrDefault();
+
+                empresa.UsuActualiza = userid;
+                empresa.FechaActualiza = DateTime.UtcNow;
+                empresa.EsEliminado = (int)Enumeradores.EsEliminado.Si;
+
+                int rows = ctx.SaveChanges();
+
+                return rows > 0;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
+
+        public bool EditEmpresa(BandejaProveedoresLista empresa, int usuarioActualiza)
+        {
+            try
+            {
+                var proveedor = (from a in ctx.Empresas where a.EmpresaId == empresa.EmpresaId select a).FirstOrDefault();
+
+                if (proveedor == null)
+                    return false;
+
+                proveedor.Email = empresa.Email;
+                proveedor.FechaActualiza = DateTime.UtcNow;
+                proveedor.RazonSocial = empresa.RazonSocial;
+                proveedor.Ruc = empresa.Ruc;
+                proveedor.TipoEmpresaId = empresa.TipoEmpresaId;
+                proveedor.UsuActualiza = usuarioActualiza;
+
+                int rows = ctx.SaveChanges();
+
+                return rows > 0;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
+
+        public bool InsertNewEmpresa(BandejaProveedoresLista empresa, int usuarioGraba)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(empresa.Ruc) || string.IsNullOrWhiteSpace(empresa.RazonSocial) || empresa.TipoEmpresaId == -1 || empresa.TipoEmpresaId == 0)
+                    return false;
+
+                var proveedor = (from a in ctx.Empresas where a.RazonSocial == empresa.RazonSocial || a.Ruc == empresa.Ruc select a).FirstOrDefault();
+
+                if (proveedor != null)
+                    return false;
+
+                Empresa E = new Empresa()
+                {
+                    Email = empresa.Email,
+                    EsEliminado = (int)Enumeradores.EsEliminado.No,
+                    FechaGraba = DateTime.UtcNow,
+                    RazonSocial = empresa.RazonSocial,
+                    Ruc = empresa.Ruc,
+                    TipoEmpresaId = empresa.TipoEmpresaId,
+                    UsuGraba = usuarioGraba
+                };
+
+                ctx.Empresas.Add(E);
+
+                int rows = ctx.SaveChanges();
+
+                return rows > 0;
+            }
+            catch(Exception e)
+            {
+                return false;
             }
         }
     }
