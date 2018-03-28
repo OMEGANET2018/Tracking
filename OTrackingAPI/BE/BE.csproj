@@ -63,7 +63,7 @@
     <Compile Include="Seguimiento\CIE10.cs" />
     <Compile Include="Seguimiento\CitaPlanDeVida.cs" />
     <Compile Include="Seguimiento\DiagnosticoPlanDeVida.cs" />
-    <Compile Include="Seguimiento\FechaSeguimiento.cs" />
+    <Compile Include="Seguimiento\DiagnosticoSeguimiento.cs" />
     <Compile Include="Seguimiento\PlanDeVida.cs" />
     <Compile Include="Seguimiento\Seguimiento.cs" />
     <Compile Include="Utils.cs" />

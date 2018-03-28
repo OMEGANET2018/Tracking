@@ -2,6 +2,7 @@
 using BE;
 using BE.Comun;
 using BE.Administracion;
+using BE.Seguimiento;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -288,7 +289,9 @@ namespace BL.Seguimiento
                 var empresas = (from a in ctx.Empresas where a.EsEliminado == NoEsEliminado select a).ToList();
                 var componentesPadres = (from a in ctx.Componentes where a.EsEliminado == NoEsEliminado && a.PadreId == 0 select a).ToList();
                 var componentesHijos = (from a in ctx.Componentes where a.EsEliminado == NoEsEliminado && a.PadreId != 0 select a).ToList();
-                var PlanesDeVida = (from a in ctx.PlanesDeVida select a).ToList();
+                var PlanesDeVida = (from a in ctx.PlanesDeVida where a.EsEliminado == NoEsEliminado select a).ToList();
+                var DiagnosticosPlanesDeVida = (from a in ctx.DiagnosticoPlanesDeVida where a.EsEliminado == NoEsEliminado select a).ToList();
+                var CitaPlanesDeVida = (from a in ctx.CitaPlanesDeVida where a.EsEliminado == NoEsEliminado select a).ToList();
 
                 bool finArchivo = false;
                 while (!finArchivo)
@@ -297,6 +300,7 @@ namespace BL.Seguimiento
                     {
                         index++;
                         IRow Row = Sheet.GetRow(index);
+                        List<string> ListaCIE10 = new List<string>();
 
                         if (Row != null)
                         {
@@ -492,7 +496,7 @@ namespace BL.Seguimiento
 
                             ComponenteDiagnostico CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(36)?.ToString(),
+                                CIE10Id = Row.GetCell(36).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(37)?.ToString(),
@@ -501,10 +505,11 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(42)?.ToString(),
+                                CIE10Id = Row.GetCell(42).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(43)?.ToString(),
@@ -513,10 +518,11 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(45)?.ToString(),
+                                CIE10Id = Row.GetCell(45).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(46)?.ToString(),
@@ -525,6 +531,7 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
                             #endregion
 
                             #region Oftalmo
@@ -649,7 +656,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(57)?.ToString(),
+                                CIE10Id = Row.GetCell(57).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(58)?.ToString(),
@@ -658,10 +665,11 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(59)?.ToString(),
+                                CIE10Id = Row.GetCell(59).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(60)?.ToString(),
@@ -670,10 +678,11 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(62)?.ToString(),
+                                CIE10Id = Row.GetCell(62).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(63)?.ToString(),
@@ -682,6 +691,7 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
                             #endregion
 
                             #region Audiometria
@@ -986,7 +996,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(87)?.ToString(),
+                                CIE10Id = Row.GetCell(87).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(88)?.ToString(),
@@ -995,10 +1005,11 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(89)?.ToString(),
+                                CIE10Id = Row.GetCell(89).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(90)?.ToString(),
@@ -1007,6 +1018,7 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
                             #endregion
 
                             #region Laboratorio
@@ -1095,7 +1107,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(96)?.ToString(),
+                                CIE10Id = Row.GetCell(96).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(97)?.ToString(),
@@ -1104,10 +1116,11 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(99)?.ToString(),
+                                CIE10Id = Row.GetCell(99).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(100)?.ToString(),
@@ -1116,10 +1129,11 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(102)?.ToString(),
+                                CIE10Id = Row.GetCell(102).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(103)?.ToString(),
@@ -1128,10 +1142,11 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(105)?.ToString(),
+                                CIE10Id = Row.GetCell(105).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(106)?.ToString(),
@@ -1140,6 +1155,7 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
                             #endregion
 
                             #region Espiro
@@ -1180,7 +1196,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(109)?.ToString(),
+                                CIE10Id = Row.GetCell(109).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(110)?.ToString(),
@@ -1189,6 +1205,7 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
                             #endregion
 
                             #region Medicina
@@ -1205,7 +1222,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(111)?.ToString(),
+                                CIE10Id = Row.GetCell(111).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(112)?.ToString(),
@@ -1214,10 +1231,11 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(113)?.ToString(),
+                                CIE10Id = Row.GetCell(113).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(114)?.ToString(),
@@ -1226,6 +1244,7 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
                             #endregion
 
                             #region Odonto
@@ -1242,7 +1261,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(115)?.ToString(),
+                                CIE10Id = Row.GetCell(115).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(116)?.ToString(),
@@ -1251,6 +1270,7 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
                             #endregion
 
                             #region EKG
@@ -1267,7 +1287,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(117)?.ToString(),
+                                CIE10Id = Row.GetCell(117).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(118)?.ToString(),
@@ -1276,6 +1296,7 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
                             #endregion
 
                             #region Rayos X
@@ -1292,7 +1313,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(119)?.ToString(),
+                                CIE10Id = Row.GetCell(119).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(120)?.ToString(),
@@ -1301,6 +1322,7 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
                             #endregion
 
                             #region Psicologia
@@ -1317,7 +1339,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(121)?.ToString(),
+                                CIE10Id = Row.GetCell(121).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(122)?.ToString(),
@@ -1326,6 +1348,130 @@ namespace BL.Seguimiento
                             };
                             ctx.ComponenteDiagnosticos.Add(CD);
                             ctx.SaveChanges();
+                            ListaCIE10.Add(CD.CIE10Id);
+                            #endregion
+
+                            #region Planes De Vida
+                            foreach(var P in PlanesDeVida)
+                            {
+                                bool ingresarEnPlan = true;
+                                foreach(var D in DiagnosticosPlanesDeVida.Where(x => x.PlanesDeVidaId == P.PlanesDeVidaId).ToList())
+                                {
+                                    if (!ListaCIE10.Contains(D.CIE10Id))
+                                        ingresarEnPlan = false;
+                                }
+
+                                if (ingresarEnPlan)
+                                {
+                                    List<string> TempCIE10 = new List<string>();
+                                    foreach (var D in DiagnosticosPlanesDeVida.Where(x => x.PlanesDeVidaId == P.PlanesDeVidaId).ToList())
+                                    {
+                                        DateTime FechaParaElControl = DateTime.UtcNow;
+                                        switch (D.ControlNumeroTipoId)
+                                        {
+                                            case (int)Enumeradores.TipoTiempo.Dia:
+                                                {
+                                                    FechaParaElControl.AddDays(D.ControlNumero.Value);
+                                                    break;
+                                                }
+                                            case (int)Enumeradores.TipoTiempo.Semana:
+                                                {
+                                                    FechaParaElControl.AddDays(D.ControlNumero.Value * 7);
+                                                    break;
+                                                }
+                                            case (int)Enumeradores.TipoTiempo.Mes:
+                                                {
+                                                    FechaParaElControl.AddMonths(D.ControlNumero.Value);
+                                                    break;
+                                                }
+                                            case (int)Enumeradores.TipoTiempo.Año:
+                                                {
+                                                    FechaParaElControl.AddYears(D.ControlNumero.Value);
+                                                    break;
+                                                }
+                                        }
+                                        BE.Seguimiento.Seguimiento seguimiento = new BE.Seguimiento.Seguimiento()
+                                        {
+                                            EsEliminado = NoEsEliminado,
+                                            Fecha = FechaParaElControl,
+                                            FechaGraba = DateTime.UtcNow,
+                                            UsuGraba = 0,
+                                            PersonaId = persona.PersonaId,
+                                            StatusSeguimiento = (int)Enumeradores.StatusSeguimiento.PorConfirmar,
+                                            TipoSeguimiento = (int)Enumeradores.TipoSeguimiento.Control
+                                        };
+                                        ctx.Seguimientos.Add(seguimiento);
+                                        ctx.SaveChanges();
+
+                                        DiagnosticoSeguimiento DxSeguimiento = new DiagnosticoSeguimiento()
+                                        {
+                                            CIE10Id = D.CIE10Id,
+                                            EsEliminado = NoEsEliminado,
+                                            FechaGraba = DateTime.UtcNow,
+                                            UsuGraba = 0,
+                                            SeguimientoId = seguimiento.SeguimientoId
+                                        };
+                                        ctx.DiagnosticosSeguimiento.Add(DxSeguimiento);
+                                        ctx.SaveChanges();
+                                        TempCIE10.Add(D.CIE10Id);
+                                    }
+
+                                    foreach(var C in CitaPlanesDeVida.Where(x => x.PlanesDeVidaId == P.PlanesDeVidaId).ToList())
+                                    {
+                                        DateTime FechaParaElControl = DateTime.UtcNow;
+                                        switch (C.NumeroTipoId)
+                                        {
+                                            case (int)Enumeradores.TipoTiempo.Dia:
+                                                {
+                                                    FechaParaElControl.AddDays(C.Numero.Value);
+                                                    break;
+                                                }
+                                            case (int)Enumeradores.TipoTiempo.Semana:
+                                                {
+                                                    FechaParaElControl.AddDays(C.Numero.Value * 7);
+                                                    break;
+                                                }
+                                            case (int)Enumeradores.TipoTiempo.Mes:
+                                                {
+                                                    FechaParaElControl.AddMonths(C.Numero.Value);
+                                                    break;
+                                                }
+                                            case (int)Enumeradores.TipoTiempo.Año:
+                                                {
+                                                    FechaParaElControl.AddYears(C.Numero.Value);
+                                                    break;
+                                                }
+                                        }
+                                        BE.Seguimiento.Seguimiento seguimiento = new BE.Seguimiento.Seguimiento()
+                                        {
+                                            EsEliminado = NoEsEliminado,
+                                            Fecha = FechaParaElControl,
+                                            FechaGraba = DateTime.UtcNow,
+                                            UsuGraba = 0,
+                                            PersonaId = persona.PersonaId,
+                                            StatusSeguimiento = (int)Enumeradores.StatusSeguimiento.PorConfirmar,
+                                            TipoSeguimiento = (int)Enumeradores.TipoSeguimiento.Consulta
+                                        };
+                                        ctx.Seguimientos.Add(seguimiento);
+                                        ctx.SaveChanges();
+
+                                        foreach(var CIE10 in TempCIE10)
+                                        {
+                                            DiagnosticoSeguimiento DxSeguimiento = new DiagnosticoSeguimiento()
+                                            {
+                                                CIE10Id = CIE10,
+                                                EsEliminado = NoEsEliminado,
+                                                FechaGraba = DateTime.UtcNow,
+                                                UsuGraba = 0,
+                                                SeguimientoId = seguimiento.SeguimientoId
+                                            };
+                                            ctx.DiagnosticosSeguimiento.Add(DxSeguimiento);
+                                            ctx.SaveChanges();
+                                        }
+                                    }
+                                }
+                            }
+
                             #endregion
 
                             RegistrosInsertados++;

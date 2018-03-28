@@ -8,6 +8,9 @@ namespace BE.Seguimiento
     {
         public int SeguimientoId { get; set; }
         public int PersonaId { get; set; }
+        public DateTime Fecha { get; set; }
+        public int TipoSeguimiento { get; set; }
+        public int StatusSeguimiento { get; set; }
         public int EsEliminado { get; set; }
         public int? UsuGraba { get; set; }
         public DateTime? FechaGraba { get; set; }

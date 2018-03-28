@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BE.Seguimiento
 {
-    [Table("tblFechaSeguimiento")]
-    public class FechaSeguimiento
+    [Table("tblDiagnosticoSeguimiento")]
+    public class DiagnosticoSeguimiento
     {
-        public int FechaSeguimientoId { get; set; }
+        public int DiagnosticoSeguimientoId { get; set; }
         public int SeguimientoId { get; set; }
-        public DateTime Fecha { get; set; }
+        public string CIE10Id { get; set; }
         public int EsEliminado { get; set; }
         public int? UsuGraba { get; set; }
         public DateTime? FechaGraba { get; set; }

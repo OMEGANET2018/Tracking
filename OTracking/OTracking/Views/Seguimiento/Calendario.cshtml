@@ -62,11 +62,19 @@
 </div>
 
 @section scripts{
+    <script src="~/Scripts/moment.js"></script>
     <link href="~/Content/fullcalendar.css" rel="stylesheet" />
     <link href="~/Content/css/FullCalendar-custom.css" rel="stylesheet" />
+    <link href="~/Content/css/jquery.contextMenu.css" rel="stylesheet" />
     <script src="~/Scripts/fullcalendar.js"></script>
+    <script src="~/Scripts/locale-all.js"></script>
+    <script src="~/Scripts/jquery.contextMenu.js"></script>
+    <script src="~/Scripts/jquery.ui.position.js"></script>
+
     <script>
-        $("#calendar").fullCalendar();
+        $(document).ready(function () {
+            Init();
+        });
 
         function ColapsarFiltro(id) {
             setTimeout(function () {
@@ -124,39 +132,40 @@
         //    });
         //}
 
-        //function Filtrar(index) {
-        //    data = {
-        //        Nombre: $("#Nombre").val(),
-        //        Index: index,
-        //        Take: $("#take").val()
-        //    };
+        function Filtrar(index) {
+            data = {
+                Nombre: $("#Nombre").val(),
+                Index: index,
+                Take: $("#take").val()
+            };
 
-        //    var width = $(window).width();
-        //    var height = $(window).height();
-        //    $("#Loading").show().css("width", width + "px").css("height", height + "px");
-        //    $("#Loading > img").css("margin-left", ((width - 200) / 2) + "px").css("margin-top", ((height - 266) / 2) + "px");
+            var width = $(window).width();
+            var height = $(window).height();
+            $("#Loading").show().css("width", width + "px").css("height", height + "px");
+            $("#Loading > img").css("margin-left", ((width - 200) / 2) + "px").css("margin-top", ((height - 266) / 2) + "px");
 
-        //    $.ajax({
-        //        cache: false,
-        //        dataType: 'html',
-        //        method: 'POST',
-        //        data: data,
-        //        url: '/Seguimiento/Filtrar',
-        //        success: function (html) {
-        //            if (html.indexOf("IniciarSesion") == -1) {
-        //                $("#Loading").hide();
-        //                $("#RenderBandeja").html(html);
-        //            } else {
-        //                location.href = "/";
-        //            }
+            $.ajax({
+                cache: false,
+                dataType: 'html',
+                method: 'POST',
+                data: data,
+                url: '/Seguimiento/Filtrar',
+                success: function (html) {
+                    if (html.indexOf("IniciarSesion") == -1) {
+                        $("#Loading").hide();
+                        $("#RenderBandeja").html(html);
+                        Init();
+                    } else {
+                        location.href = "/";
+                    }
 
-        //        },
-        //        error: function (error) {
-        //            alerta("Sucedió un error al conectarse al servidor", "rojo");
-        //            $("#Loading").hide();
-        //            console.log(error);
-        //        }
-        //    });
-        //}
+                },
+                error: function (error) {
+                    alerta("Sucedió un error al conectarse al servidor", "rojo");
+                    $("#Loading").hide();
+                    console.log(error);
+                }
+            });
+        }
     </script>
 }

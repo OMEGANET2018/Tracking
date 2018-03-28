@@ -28,6 +28,6 @@ namespace DAL
         public DbSet<DiagnosticoPlanDeVida> DiagnosticoPlanesDeVida { get; set; }
         public DbSet<CitaPlanDeVida> CitaPlanesDeVida { get; set; }
         public DbSet<Seguimiento> Seguimientos { get; set; }
-        public DbSet<FechaSeguimiento> FechasSeguimiento { get; set; }
+        public DbSet<DiagnosticoSeguimiento> DiagnosticosSeguimiento { get; set; }
     }
 }

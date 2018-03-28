@@ -8,7 +8,7 @@ namespace OTrackingAPI.Controllers.Seguimiento
     {
         SeguimientoRepository SR = new SeguimientoRepository();
 
-        [HttpGet]
+        [HttpPost]
         public IHttpActionResult ObtenerListadoSeguimiento(BandejaSeguimiento data)
         {
             BandejaSeguimiento result = SR.ObtenerListadoSeguimiento(data);

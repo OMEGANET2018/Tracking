@@ -136,4 +136,21 @@ namespace OTracking.Models.Comun
         public int TipoEmpresaId { get; set; }
         public string Email { get; set; }
     }
+
+    public class BandejaSeguimiento : Bandejas
+    {
+        public string Nombre { get; set; }
+        public List<BandejaSeguimientoDetalle> Lista { get; set; }
+    }
+
+    public class BandejaSeguimientoDetalle
+    {
+        public string Nombre { get; set; }
+        public DateTime Fecha { get; set; }
+        public int TipoSeguimientoId { get; set; }
+        public string TipoSeguimiento { get; set; }
+        public int StatusSeguimientoId { get; set; }
+        public string StatusSeguimiento { get; set; }
+        public string Color { get; set; }
+    }
 }

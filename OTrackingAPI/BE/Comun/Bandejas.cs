@@ -145,6 +145,12 @@ namespace BE.Comun
 
     public class BandejaSeguimientoDetalle
     {
-
+        public string Nombre { get; set; }
+        public DateTime Fecha { get; set; }
+        public int TipoSeguimientoId { get; set; }
+        public string TipoSeguimiento { get; set; }
+        public int StatusSeguimientoId { get; set; }
+        public string StatusSeguimiento { get; set; }
+        public string Color { get; set; }
     }
 }

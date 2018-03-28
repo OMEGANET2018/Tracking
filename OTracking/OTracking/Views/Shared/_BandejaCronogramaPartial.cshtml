@@ -4,14 +4,14 @@
     int Primer = 0;
     int Ultimo = 0;
     int Index = 0;
-
-    if (ViewBag.Usuarios != null)
+    string eventos = "";
+    if (ViewBag.Seguimiento != null)
     {
-        Take = ViewBag.Usuarios.Take;
-        Index = ViewBag.Usuarios.Index;
-        Total = ViewBag.Usuarios.TotalRegistros;
+        Take = ViewBag.Seguimiento.Take;
+        Index = ViewBag.Seguimiento.Index;
+        Total = ViewBag.Seguimiento.TotalRegistros;
         Primer = ((Index - 1) * Take) + 1;
-        Ultimo = Primer + (ViewBag.Usuarios.Lista.Count - 1);
+        Ultimo = Primer + (ViewBag.Seguimiento.Lista.Count - 1);
 
         Primer = Primer < 0 ? 0 : Primer;
         Ultimo = Ultimo < 0 ? 0 : Ultimo;
@@ -46,37 +46,33 @@
         <table class="table table-hover" id="TablaAExportar">
             <thead>
                 <tr>
-                    <th>Nombre Usuario</th>
-                    <th>Nombre Persona</th>
-                    <th class="hidden-xs">Rol</th>
-                    <th>Empresa</th>
-                    <th class="hidden-xs">Tipo Empresa</th>
-                    <th class="NoImprimir">Editar</th>
-                    <th class="NoImprimir">Eliminar</th>
+                    <th>Nombre</th>
+                    <th>Fecha</th>
+                    <th>Tipo Seguimiento</th>
+                    <th>Status Seguimiento</th>
                 </tr>
             </thead>
             <tbody>
                 @{
-                    if (ViewBag.Usuarios == null)
+                    if (ViewBag.Seguimiento == null)
                     {
                         <tr><td colspan="7" class="text-center">Error al conectarse al servidor</td></tr>
                     }
-                    else if (ViewBag.Usuarios.Lista.Count == 0)
+                    else if (ViewBag.Seguimiento.Lista.Count == 0)
                     {
                         <tr><td colspan="7" class="text-center">No hay resultados</td></tr>
                     }
                     else
                     {
-                        foreach (var item in ViewBag.Usuarios.Lista)
+                        foreach (OTracking.Models.Comun.BandejaSeguimientoDetalle item in ViewBag.Seguimiento.Lista)
                         {
+                            eventos += "{title: '" + item.Nombre + "', start: '" + item.Fecha.ToString("yyyy-MM-dd") + "', color: '" + item.Color + "'},";
                             <tr>
-                                <td>@item.NombreUsuario</td>
-                                <td>@item.NombreCompleto</td>
-                                <td class="hidden-xs">@item.Rol</td>
-                                <td>@item.Empresa</td>
-                                <td class="hidden-xs">@item.TipoEmpresa</td>
-                                <td class="NoImprimir"><a href="@Url.Action("CrearUsuario","Acceso",new {id = item.UsuarioId })"><span class="icon-edit"></span></a></td>
-                                <td class="NoImprimir"><a onclick="DeleteUser(@item.UsuarioId)"><span class="icon-trash"></span></a></td>
+                                <td>@item.Nombre</td>
+                                <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
+                                <td>@item.TipoSeguimiento</td>
+                                <td style="font-weight:bolder;color:@item.Color">@item.StatusSeguimiento</td>
+                                <td id="status" style="display:none">@item.StatusSeguimientoId</td>
                             </tr>
                         }
                     }
@@ -124,3 +120,53 @@
         </div>
     </div>
 </div>
+<script>
+    function Init() {
+        $('#calendar').fullCalendar("destroy");
+        $('#calendar').fullCalendar({
+            locale: 'es',
+            defaultDate: new Date(),
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: ''
+            },
+            events: [
+            @Html.Raw(eventos)
+            ]
+        });
+
+        $("#TablaAExportar tbody").contextMenu({
+            selector: 'tr',
+            trigger: 'left',
+            hideOnSecondTrigger: true,
+            items: {
+                "Confirmar": {
+                    name: "Confirmar",
+                    callback: function (itemKey, opt, rootMenu, originalEvent) {
+                        console.log(itemKey);
+                        console.log(opt);
+                        console.log(rootMenu);
+                        console.log(originalEvent);
+                    },
+                    disabled: function (key, opt) {
+                        if ($(opt.$trigger).children("#status").html() == 1) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                },
+                "Cambiar": { name: "Cambiar" },
+                "Adjuntar": { name: "Adjuntar" },
+                "Eliminar": { name: "Eliminar" },
+                "sep1": "---------",
+                "Cerrar": {
+                    name: "Cerrar",
+                    callback: function (itemKey, opt, rootMenu) {}
+                }
+            }
+
+        });
+    }
+</script>

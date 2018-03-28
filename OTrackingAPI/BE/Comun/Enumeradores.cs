@@ -18,7 +18,9 @@
             Zonas = 111,
             Correo = 112,
             TipoValorComponente = 113,
-            TipoTiempo = 114
+            TipoTiempo = 114,
+            TipoSeguimiento = 115,
+            StatusSeguimiento = 116
         }
 
 
@@ -43,6 +45,28 @@
             ClaveCorreo = 3,
             BodyEnvioEMO = 4,
             BodyEnvioRegistroUsuario = 5
+        }
+
+        public enum TipoTiempo
+        {
+            Dia = 1,
+            Semana = 2,
+            Mes = 3,
+            Año = 4
+        }
+
+        public enum TipoSeguimiento
+        {
+            Consulta = 1,
+            Control = 2
+        }
+
+        public enum StatusSeguimiento
+        {
+            PorConfirmar = 1,
+            Confirmado = 2,
+            Atendido = 3,
+            Eliminado = 4
         }
     }
 }
