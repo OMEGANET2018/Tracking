@@ -126,3 +126,4 @@ E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\OTrackingAPI\obj\Debug\OTrac
 E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\OTrackingAPI\obj\Debug\OTrackingAPI.csproj.CoreCompileInputs.cache
 E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\OTrackingAPI\obj\Debug\OTrackingAPI.dll
 E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\OTrackingAPI\obj\Debug\OTrackingAPI.pdb
+F:\Proyectos\Tracking\OTrackingAPI\OTrackingAPI\obj\Debug\OTrackingAPI.csproj.CopyComplete

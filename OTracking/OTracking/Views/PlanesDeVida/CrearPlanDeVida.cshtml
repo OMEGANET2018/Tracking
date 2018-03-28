@@ -269,12 +269,12 @@
         <div class="row">
             <div class="col-12 text-center botonera">
                 <div>
-                    <button class="btn-warning boton form-control" type="submit" style="cursor:pointer;" onclick="$('#message').hide()">
+                    <button class="btn-info boton form-control" type="submit" style="cursor:pointer;" onclick="$('#message').hide()">
                         <i class="fa fa-search"></i> Guardar
                     </button>
                 </div>
                 <div>
-                    <button class="btn-warning boton form-control" type="button" onclick="location.href='@Url.Action("BandejaPlanesDeVida", "PlanesDeVida")'" style="cursor:pointer;">
+                    <button class="btn-info boton form-control" type="button" onclick="location.href='@Url.Action("BandejaPlanesDeVida", "PlanesDeVida")'" style="cursor:pointer;">
                         <i class="fa fa-search"></i> Cancelar
                     </button>
                 </div>
@@ -299,8 +299,8 @@
                 <div><div style="width:80px;margin-left:30px;">Durante:</div><div><input type="number" id="inputDurante" onkeydown="$(this).css('border-color','initial')"/><select id="select2" onchange="$(this).css('border-color','initial')">@{if (ViewBag.TipoTiempo != null) { foreach (OTracking.Models.Comun.Dropdownlist T in ViewBag.TipoTiempo) {<option value="@T.Id">@T.Value</option> } } }</select></div></div>
             </div>
             <div class="modal-footer">
-                <button id="PopupAceptar" type="button" class="btn-warning boton form-control">Aceptar</button>
-                <button type="button" class="btn-warning boton form-control" data-dismiss="modal">Cancelar</button>
+                <button id="PopupAceptar" type="button" class="btn-info boton form-control">Aceptar</button>
+                <button type="button" class="btn-info boton form-control" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
 

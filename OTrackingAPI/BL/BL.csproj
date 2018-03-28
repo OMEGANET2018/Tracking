@@ -76,6 +76,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Acceso\UsuarioRepositorio.cs" />
     <Compile Include="Seguimiento\PlanDeVidaRepository.cs" />
+    <Compile Include="Seguimiento\SeguimientoRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BE\BE.csproj">

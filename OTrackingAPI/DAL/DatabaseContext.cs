@@ -27,5 +27,7 @@ namespace DAL
         public DbSet<tblCIE10> CIE10 { get; set; }
         public DbSet<DiagnosticoPlanDeVida> DiagnosticoPlanesDeVida { get; set; }
         public DbSet<CitaPlanDeVida> CitaPlanesDeVida { get; set; }
+        public DbSet<Seguimiento> Seguimientos { get; set; }
+        public DbSet<FechaSeguimiento> FechasSeguimiento { get; set; }
     }
 }

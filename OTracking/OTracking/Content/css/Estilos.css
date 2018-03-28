@@ -28,7 +28,7 @@ body {
     max-width: 600px;
     background-color:#fff;
     border-radius:10px;
-    margin-top:30%;
+    margin-top:20%;
 }
 
 
@@ -48,7 +48,7 @@ body {
 }
 
 .IniciarSesion {
-    font-weight:300;
+    font-weight:bolder;
     font-size: 18px;
     color: #1DAAB5;
     font-family: 'Roboto', sans-serif;
@@ -106,7 +106,7 @@ body {
 /*HEADER*/
 body header {
     /*border: 2px solid blue;*/
-    background: #3C3C3B;
+    background: #28ADBF;
     height: 85px;
     /*z-index:1000;*/
 }
@@ -118,7 +118,7 @@ header .menu {
 }
 
 header .boton-menu {
-    background: #5b5b59;
+    background: #217782;
     width: 80px;
     text-align: center;
     /*--FLEX--*/
@@ -173,7 +173,7 @@ header .menu .nombre-usuario {
     margin-left: -330px;
     left: 0px;
     width: 330px;
-    background: #3C3C3B;
+    background: white;
     position: fixed;
     height: 100%;
     z-index: 1000;
@@ -198,7 +198,7 @@ header .menu .nombre-usuario {
 }
 
 .barra-lateral a {
-    color: #fff;
+    color: black;
 }
 
 .barra-lateral .datos-usuario {
@@ -236,8 +236,9 @@ header .menu .nombre-usuario {
 }
 
 .barra-lateral .menu a:hover {
-    background: #5b5b59;
+    background: #BDBDBD;
     text-decoration: none;
+    color:white;
 }
 
 .barra-lateral .menu a i {
@@ -277,15 +278,19 @@ body .contenido {
     min-height: calc(100vh - 140px);
     /*border:1px solid red;*/
     width: 100%;
+    background-color:#E8EDE9;
+}
+
+.contenido2{
+    background-color:white;
 }
 
 
 /*--FOOTER--*/
 body footer {
-    background: #fff;
+    background: #E8EDE9;
     padding: 15px;
     color: #444;
-    border-top: 1px solid #d2d6de;
 }
 
 
@@ -529,7 +534,7 @@ table tbody {
 }
 
 .btn-info {
-    background-color: #00c0ef;
+    background-color: #3398AC;
     border-color: #00acd6;
 }
 

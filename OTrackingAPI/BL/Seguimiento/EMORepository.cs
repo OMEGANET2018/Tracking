@@ -1,5 +1,7 @@
 ﻿using DAL;
+using BE;
 using BE.Comun;
+using BE.Administracion;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +9,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Linq;
 using System.Threading.Tasks;
-using BE;
+using System.Globalization;
 
 namespace BL.Seguimiento
 {
@@ -266,6 +268,1083 @@ namespace BL.Seguimiento
             }
             catch(Exception e)
             {
+                return null;
+            }
+        }
+
+        public object EnviarEMO(MemoryStream stream)
+        {
+            try
+            {
+                System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("es-PE");
+                int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
+                int RegistrosInsertados = 0;
+                int RegistrosErrados = 0;
+
+                IWorkbook book = new XSSFWorkbook(stream);
+                ISheet Sheet = book.GetSheet("EMO");
+                int index = 6;
+
+                var empresas = (from a in ctx.Empresas where a.EsEliminado == NoEsEliminado select a).ToList();
+                var componentesPadres = (from a in ctx.Componentes where a.EsEliminado == NoEsEliminado && a.PadreId == 0 select a).ToList();
+                var componentesHijos = (from a in ctx.Componentes where a.EsEliminado == NoEsEliminado && a.PadreId != 0 select a).ToList();
+                var PlanesDeVida = (from a in ctx.PlanesDeVida select a).ToList();
+
+                bool finArchivo = false;
+                while (!finArchivo)
+                {
+                    try
+                    {
+                        index++;
+                        IRow Row = Sheet.GetRow(index);
+
+                        if (Row != null)
+                        {
+                            string NroDocumento = Row.GetCell(3)?.ToString();
+                            DateTime? fechaexamen = Row.GetCell(22) == null ? null : (DateTime?)DateTime.Parse(Row.GetCell(22).ToString(),CultureInfo.CurrentCulture,DateTimeStyles.AssumeLocal).ToUniversalTime();
+
+                            var persona = (from a in ctx.Personas where a.NroDocumento == NroDocumento && a.EsEliminado == NoEsEliminado select a).FirstOrDefault();
+
+                            if (persona == null)
+                                throw new Exception();
+
+                            var colaborador = (from a in ctx.Colaboradores where a.PersonaId == persona.PersonaId && a.EsEliminado == NoEsEliminado select a).FirstOrDefault();
+
+                            if (colaborador == null)
+                                throw new Exception();
+
+                            #region INFORMACION DEL SERVICIO
+                            Servicio servicio = new Servicio()
+                            {
+                                AptitudId = Row.GetCell(26) == null ? null : (int?)Row.GetCell(26).NumericCellValue,
+                                ColaboradorId = colaborador.ColaboradorId,
+                                EsEliminado = NoEsEliminado,
+                                FechaExamen = fechaexamen,
+                                FechaGraba = DateTime.UtcNow,
+                                UsuGraba = 0,
+                                TipoExamenId = (int)Row.GetCell(24).NumericCellValue,
+                                ProoveedorId = empresas.Where(x => x.RazonSocial.ToUpper() == Row.GetCell(20).ToString().ToUpper()).Select(x => x.EmpresaId).FirstOrDefault()
+                            };
+
+                            ctx.Servicios.Add(servicio);
+                            ctx.SaveChanges();
+
+                            if (servicio.ServicioId == 0)
+                                throw new Exception();
+                            #endregion
+
+                            #region Hábitos Noscivos
+                            ServicioComponente SC = new ServicioComponente()
+                            {
+                                ComponenteId = componentesPadres.Where(x => x.Nombre == "Hábitos Noscivos").Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                UsuGraba = 0,
+                                ServicioId = servicio.ServicioId
+                            };
+                            ctx.ServicioComponentes.Add(SC);
+                            ctx.SaveChanges();
+
+                            ComponenteCampo CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Fumar" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(28).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Licor" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(30).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Drogas" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(32).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+                            #endregion
+
+                            #region Trieaje
+                            SC = new ServicioComponente()
+                            {
+                                ComponenteId = componentesPadres.Where(x => x.Nombre == "Triaje").Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                UsuGraba = 0,
+                                ServicioId = servicio.ServicioId
+                            };
+                            ctx.ServicioComponentes.Add(SC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Peso" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(33).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Talla" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(34).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Cintura" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(38).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Cadera" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(39).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Sistolica" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(41).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Diastolica" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(44).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "FC" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(47).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "FR" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(48).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            ComponenteDiagnostico CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(36)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(37)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(42)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(43)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(45)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(46)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+                            #endregion
+
+                            #region Oftalmo
+                            SC = new ServicioComponente()
+                            {
+                                ComponenteId = componentesPadres.Where(x => x.Nombre == "Oftalmo").Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                UsuGraba = 0,
+                                ServicioId = servicio.ServicioId
+                            };
+                            ctx.ServicioComponentes.Add(SC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Cerca OD" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(49).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Cerca OI" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(50).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Lejos OD" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(51).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Lejos OI" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(52).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Cerca OD" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(53).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Cerca OI" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(54).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Lejos OD" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(55).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Lejos OI" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(56).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Discro" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(61).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(57)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(58)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(59)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(60)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(62)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(63)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+                            #endregion
+
+                            #region Audiometria
+                            SC = new ServicioComponente()
+                            {
+                                ComponenteId = componentesPadres.Where(x => x.Nombre == "Audiometria").Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                UsuGraba = 0,
+                                ServicioId = servicio.ServicioId
+                            };
+                            ctx.ServicioComponentes.Add(SC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Otoscopia OD" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(64).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Otoscopia OI" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(65).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Der_125" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(65).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Der_250" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(66).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Der_500" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(67).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Der_750" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(68).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Der_1000" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(69).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Der_1500" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(70).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Der_2000" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(71).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Der_3000" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(72).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Der_4000" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(73).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Der_6000" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(74).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Der_8000" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(75).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Izq_125" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(76).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Izq_250" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(77).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Izq_500" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(78).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Izq_750" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(79).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Izq_1000" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(80).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Izq_1500" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(81).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Izq_2000" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(82).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Izq_3000" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(83).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Izq_4000" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(84).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Izq_6000" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(85).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Oido_Izq_8000" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(86).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(87)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(88)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(89)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(90)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+                            #endregion
+
+                            #region Laboratorio
+                            SC = new ServicioComponente()
+                            {
+                                ComponenteId = componentesPadres.Where(x => x.Nombre == "Laboratorio").Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                UsuGraba = 0,
+                                ServicioId = servicio.ServicioId
+                            };
+                            ctx.ServicioComponentes.Add(SC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Grupo Sanguineo" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(92).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Factor RH" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(94).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Hemoglobina" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(95).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Colesterol" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(98).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Trigliceridos" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(101).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "Glucosa" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(104).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(96)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(97)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(99)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(100)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(102)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(103)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(105)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(106)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+                            #endregion
+
+                            #region Espiro
+                            SC = new ServicioComponente()
+                            {
+                                ComponenteId = componentesPadres.Where(x => x.Nombre == "Espiro").Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                UsuGraba = 0,
+                                ServicioId = servicio.ServicioId
+                            };
+                            ctx.ServicioComponentes.Add(SC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "FEV1 Teorico" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(107).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CC = new ComponenteCampo()
+                            {
+                                ComponenteId = componentesHijos.Where(x => x.Nombre == "FVC Teorico" && x.PadreId == SC.ComponenteId).Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0,
+                                Valor = Row.GetCell(108).ToString()
+                            };
+                            ctx.ComponenteCampos.Add(CC);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(109)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(110)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+                            #endregion
+
+                            #region Medicina
+                            SC = new ServicioComponente()
+                            {
+                                ComponenteId = componentesPadres.Where(x => x.Nombre == "Medicina").Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                UsuGraba = 0,
+                                ServicioId = servicio.ServicioId
+                            };
+                            ctx.ServicioComponentes.Add(SC);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(111)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(112)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(113)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(114)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+                            #endregion
+
+                            #region Odonto
+                            SC = new ServicioComponente()
+                            {
+                                ComponenteId = componentesPadres.Where(x => x.Nombre == "Odonto").Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                UsuGraba = 0,
+                                ServicioId = servicio.ServicioId
+                            };
+                            ctx.ServicioComponentes.Add(SC);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(115)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(116)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+                            #endregion
+
+                            #region EKG
+                            SC = new ServicioComponente()
+                            {
+                                ComponenteId = componentesPadres.Where(x => x.Nombre == "EKG").Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                UsuGraba = 0,
+                                ServicioId = servicio.ServicioId
+                            };
+                            ctx.ServicioComponentes.Add(SC);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(117)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(118)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+                            #endregion
+
+                            #region Rayos X
+                            SC = new ServicioComponente()
+                            {
+                                ComponenteId = componentesPadres.Where(x => x.Nombre == "Rayos X").Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                UsuGraba = 0,
+                                ServicioId = servicio.ServicioId
+                            };
+                            ctx.ServicioComponentes.Add(SC);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(119)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(120)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+                            #endregion
+
+                            #region Psicologia
+                            SC = new ServicioComponente()
+                            {
+                                ComponenteId = componentesPadres.Where(x => x.Nombre == "Psicologia").Select(x => x.ComponenteId).FirstOrDefault(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                UsuGraba = 0,
+                                ServicioId = servicio.ServicioId
+                            };
+                            ctx.ServicioComponentes.Add(SC);
+                            ctx.SaveChanges();
+
+                            CD = new ComponenteDiagnostico()
+                            {
+                                CIE10Id = Row.GetCell(121)?.ToString(),
+                                EsEliminado = NoEsEliminado,
+                                FechaGraba = DateTime.UtcNow,
+                                Observacion = Row.GetCell(122)?.ToString(),
+                                ServicioComponenteId = SC.ServicioComponenteId,
+                                UsuGraba = 0
+                            };
+                            ctx.ComponenteDiagnosticos.Add(CD);
+                            ctx.SaveChanges();
+                            #endregion
+
+                            RegistrosInsertados++;
+                        }
+                        else
+                        {
+                            finArchivo = true;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        RegistrosErrados++;
+                    }
+                }
+                return new { RegistrosInsertados, RegistrosErrados };
+            }
+            catch (Exception ex)
+            {
+
                 return null;
             }
         }

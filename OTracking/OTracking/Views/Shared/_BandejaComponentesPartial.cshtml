@@ -34,7 +34,7 @@
         </select>
     </div>
 </div>*@
-<div class="box box-warning mt-2">
+<div class="box box-info mt-2">
     <div class="table-responsive">
         <table class="table table-hover" id="TablaAExportar">
             <thead>
@@ -62,31 +62,36 @@
                             <tr id="componente-@item.ComponenteId">
                                 <td id="padre-valor">@item.Nombre</td>
                                 <td style="padding:0px;">
-                                    <table style="border:1px solid lightgray">
-                                        <thead>
-                                            <tr>
-                                                <th>Nombre</th>
-                                                <th>Tipo Valor</th>
-                                                <th>Minimo</th>
-                                                <th>Máximo</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @{ 
-                                                foreach(OTracking.Models.Comun.BandejaComponente hijo in item.Lista)
-                                                {
+                                    @{ 
+                                        if(item.Lista.Count > 0)
+                                        {
+                                            <table style="border:1px solid lightgray">
+                                                <thead>
                                                     <tr>
-                                                        <td style="display:none;" id="campo-id">@hijo.ComponenteId</td>
-                                                        <td id="campo-nombre">@hijo.Nombre</td>
-                                                        <td id="campo-valor" style="display:none">@(hijo.TipoValorId.HasValue ? hijo.TipoValorId.Value.ToString() : "")</td>
-                                                        <td>@(hijo.TipoValorTexto != null ? hijo.TipoValorTexto : "")</td>
-                                                        <td id="campo-minimo">@(hijo.ValorMinimo.HasValue ? hijo.ValorMinimo.Value.ToString() : "")</td>
-                                                        <td id="campo-maximo">@(hijo.ValorMaximo.HasValue ? hijo.ValorMaximo.Value.ToString() : "")</td>
+                                                        <th>Nombre</th>
+                                                        <th>Tipo Valor</th>
+                                                        <th>Minimo</th>
+                                                        <th>Máximo</th>
                                                     </tr>
-                                                }
-                                            }
-                                        </tbody>
-                                    </table>
+                                                </thead>
+                                                <tbody>
+                                                    @{ 
+                                                        foreach(OTracking.Models.Comun.BandejaComponente hijo in item.Lista)
+                                                        {
+                                                            <tr>
+                                                                <td style="display:none;" id="campo-id">@hijo.ComponenteId</td>
+                                                                <td id="campo-nombre">@hijo.Nombre</td>
+                                                                <td id="campo-valor" style="display:none">@(hijo.TipoValorId.HasValue ? hijo.TipoValorId.Value.ToString() : "")</td>
+                                                                <td>@(hijo.TipoValorTexto != null ? hijo.TipoValorTexto : "")</td>
+                                                                <td id="campo-minimo">@(hijo.ValorMinimo.HasValue ? hijo.ValorMinimo.Value.ToString() : "")</td>
+                                                                <td id="campo-maximo">@(hijo.ValorMaximo.HasValue ? hijo.ValorMaximo.Value.ToString() : "")</td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
+                                    }
                                 </td>
                                 <td><a onclick="UpdateComponente(@item.ComponenteId)"><span class="icon-edit"></span></a></td>
                                 <td><a onclick="DeleteComponente(@item.ComponenteId)"><span class="icon-trash"></span></a></td>

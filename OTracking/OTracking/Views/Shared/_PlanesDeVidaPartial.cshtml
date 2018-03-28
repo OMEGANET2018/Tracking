@@ -57,7 +57,7 @@
         </select>
     </div>
 </div>
-<div class="box box-warning mt-2">
+<div class="box box-info mt-2">
     <div class="table-responsive">
                 @{
                     if (ViewBag.PlanesDeVida == null)
@@ -75,10 +75,10 @@
                         {
                             <div class="Titulo col-12">
                                 @PDV.Nombre 
-                                <button class="btn-warning boton form-control" onclick="location.href='@Url.Action("CrearPlanDeVida","PlanesDeVida",new { id = PDV.PlanDeVidaId})'">
+                                <button class="btn-info boton form-control" onclick="location.href='@Url.Action("CrearPlanDeVida","PlanesDeVida",new { id = PDV.PlanDeVidaId})'">
                                     <i class="fa fa-search"></i> Editar
                                 </button>
-                                <button class="btn-warning boton form-control" onclick="Delete(@PDV.PlanDeVidaId)">
+                                <button class="btn-info boton form-control" onclick="Delete(@PDV.PlanDeVidaId)">
                                     <i class="fa fa-search"></i> Eliminar
                                 </button>
                             </div>

@@ -184,3 +184,4 @@ E:\Projects\Omeganet\Tracking\Tracking\OTracking\OTracking\obj\Debug\OTracking.c
 E:\Projects\Omeganet\Tracking\Tracking\OTracking\OTracking\obj\Debug\OTracking.csproj.CoreCompileInputs.cache
 E:\Projects\Omeganet\Tracking\Tracking\OTracking\OTracking\obj\Debug\OTracking.dll
 E:\Projects\Omeganet\Tracking\Tracking\OTracking\OTracking\obj\Debug\OTracking.pdb
+F:\Proyectos\Tracking\OTracking\OTracking\obj\Debug\OTracking.csproj.CopyComplete

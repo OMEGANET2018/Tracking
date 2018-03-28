@@ -32,5 +32,16 @@ namespace OTrackingAPI.Controllers.Seguimiento
             TemplateFile.Dispose();
             return Ok(response);
         }
+
+        [HttpPost]
+        public IHttpActionResult EnviarEMO()
+        {
+            System.Threading.Tasks.Task<byte[]> bytes = Request.Content.ReadAsByteArrayAsync();
+
+            MemoryStream stream = new MemoryStream(bytes.Result);
+            object response = ER.EnviarEMO(stream);
+
+            return Ok(JsonConvert.SerializeObject(response));
+        }
     }
 }

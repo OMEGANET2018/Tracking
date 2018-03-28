@@ -18,7 +18,7 @@
 <div class="container-fluid">
     <div class="box box-default mt-2" id="acordion">
         <div class="box-header with-border" id="heading1">
-            <h3 class="box-title" style="cursor:pointer;"><i class="icon-attach"></i> Carga de Planilla</h3>
+            <h3 class="box-title" style="cursor:pointer;"><i class="icon-attach"></i> Carga de EMO</h3>
         </div>
         <div id="collapse1" class="box-body collapse show" aria-labelledby="heading1" style="overflow:hidden;">
             <form>
@@ -26,10 +26,10 @@
                     <div class="col-12 col-lg-6">
                         <div class="form-group">
                             <label for="">Seleccione Archivo</label>
-                            <input type="file" id="archivo" name="archivo" class="form-control" placeholder="archivo" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"    data-validation="size required"
-                                                                                                                                                                                                    data-validation-max-size="10mb"
-                                                                                                                                                                                                    data-validation-error-msg-required="El archivo es requerido"
-                                                                                                                                                                                                    data-validation-error-msg-size="El archivo no puede ser mayor a 10 MB"/>
+                            <input type="file" id="archivo" name="archivo" class="form-control" placeholder="archivo" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" data-validation="size required"
+                                   data-validation-max-size="10mb"
+                                   data-validation-error-msg-required="El archivo es requerido"
+                                   data-validation-error-msg-size="El archivo no puede ser mayor a 10 MB" />
                         </div>
                     </div>
                     <div class="col-6">
@@ -75,7 +75,6 @@
             EnviarFormulario();
         });
         function EnviarFormulario() {
-            $("#registros-List").hide();
             var data = new FormData();
 
             data.append("file", document.getElementById("archivo").files[0]);
@@ -92,7 +91,7 @@
                 data: data,
                 contentType: false,
                 processData: false,
-                url: '/Administracion/InsertarPersonaExcel',
+                url: '/EMO/EnviarEMO',
                 success: function (json) {
                     $("#Loading").hide();
                     if (json != null && json != undefined) {

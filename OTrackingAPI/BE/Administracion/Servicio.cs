@@ -6,7 +6,7 @@ namespace BE.Administracion
     [Table("tblServicio")]
     public class Servicio
     {
-        public int Id { get; set; }
+        public int ServicioId { get; set; }
         public int ColaboradorId { get; set; }
         public DateTime? FechaExamen { get; set; }
         public int TipoExamenId { get; set; }

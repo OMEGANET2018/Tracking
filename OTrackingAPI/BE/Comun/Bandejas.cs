@@ -136,4 +136,15 @@ namespace BE.Comun
         public int TipoEmpresaId { get; set; }
         public string Email { get; set; }
     }
+
+    public class BandejaSeguimiento : Bandejas
+    {
+        public string Nombre { get; set; }
+        public List<BandejaSeguimientoDetalle> Lista { get; set; }
+    }
+
+    public class BandejaSeguimientoDetalle
+    {
+
+    }
 }

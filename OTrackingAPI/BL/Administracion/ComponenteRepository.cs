@@ -23,28 +23,27 @@ namespace BL.Administracion
                 var parametros = (from a in ctx.Parametros where a.GrupoId == grupoParametro && a.EsEliminado == NoEsEliminado select a).ToList();
 
                 var ListaComponentes = (from a in componentes
-                                        join b in componentes on a.ComponenteId equals b.PadreId
-                                        join c in parametros on b.TipoValorId equals c.ParametroId
                                         where a.PadreId == 0
-                                        group new { a,b,c} by a.ComponenteId into grp
+                                        group new { a } by a.ComponenteId into grp
                                         select new BandejaComponente()
                                         {
                                             ComponenteId = grp.FirstOrDefault().a.ComponenteId,
                                             EsEliminado = grp.FirstOrDefault().a.EsEliminado,
                                             Nombre = grp.FirstOrDefault().a.Nombre,
                                             RecordStatus = RecordStatusGrabado,
-                                            Lista = (from x in grp select new BandejaComponente()
-                                                            {
-                                                                EsEliminado = x.b.EsEliminado,
-                                                                ComponenteId = x.b.ComponenteId,
-                                                                Nombre = x.b.Nombre,
-                                                                PadreId = x.b.PadreId,
-                                                                RecordStatus = RecordStatusGrabado,
-                                                                TipoValorId = x.b.TipoValorId,
-                                                                TipoValorTexto = x.c.Valor1,
-                                                                ValorMinimo = x.b.ValorMinimo,
-                                                                ValorMaximo = x.b.ValorMaximo
-                                                            }).ToList()
+                                            Lista = (from a in componentes where a.PadreId == grp.FirstOrDefault().a.ComponenteId
+                                                     select new BandejaComponente()
+                                                     {
+                                                         EsEliminado = a.EsEliminado,
+                                                         ComponenteId = a.ComponenteId,
+                                                         Nombre = a.Nombre,
+                                                         PadreId = a.PadreId,
+                                                         RecordStatus = RecordStatusGrabado,
+                                                         TipoValorId = a.TipoValorId,
+                                                         TipoValorTexto = parametros.Where(z => z.ParametroId == a.TipoValorId).Select(z => z.Valor1).FirstOrDefault(),
+                                                         ValorMinimo = a.ValorMinimo,
+                                                         ValorMaximo = a.ValorMaximo
+                                                     }).ToList()
                                         }).ToList();
 
                 return ListaComponentes;
@@ -104,22 +103,25 @@ namespace BL.Administracion
                 if (Padre.ComponenteId == 0)
                     return false;
 
-                foreach(BandejaComponente C in data.Lista)
+                if(data.Lista != null)
                 {
-                    Componente Hijo = new Componente()
+                    foreach (BandejaComponente C in data.Lista)
                     {
-                        EsEliminado = NoEsEliminado,
-                        FechaGraba = DateTime.UtcNow,
-                        Nombre = C.Nombre,
-                        PadreId = Padre.ComponenteId,
-                        TipoValorId = C.TipoValorId,
-                        ValorMaximo = C.ValorMaximo,
-                        ValorMinimo = C.ValorMinimo,
-                        UsuGraba = Padre.UsuGraba
-                    };
+                        Componente Hijo = new Componente()
+                        {
+                            EsEliminado = NoEsEliminado,
+                            FechaGraba = DateTime.UtcNow,
+                            Nombre = C.Nombre,
+                            PadreId = Padre.ComponenteId,
+                            TipoValorId = C.TipoValorId,
+                            ValorMaximo = C.ValorMaximo,
+                            ValorMinimo = C.ValorMinimo,
+                            UsuGraba = Padre.UsuGraba
+                        };
 
-                    ctx.Componentes.Add(Hijo);
-                    ctx.SaveChanges();
+                        ctx.Componentes.Add(Hijo);
+                        ctx.SaveChanges();
+                    }
                 }
 
                 return true;
@@ -186,54 +188,56 @@ namespace BL.Administracion
                     ctx.SaveChanges();
                 }
 
-
-                foreach(var C in data.Lista)
+                if(data.Lista != null)
                 {
-                    switch (C.RecordStatus)
+                    foreach (var C in data.Lista)
                     {
-                        case (int)Enumeradores.RecordStatus.Agregar:
-                            {
-                                Componente Hijo = new Componente()
+                        switch (C.RecordStatus)
+                        {
+                            case (int)Enumeradores.RecordStatus.Agregar:
                                 {
-                                    EsEliminado = NoEsEliminado,
-                                    FechaGraba = DateTime.UtcNow,
-                                    Nombre = C.Nombre,
-                                    PadreId = Padre.ComponenteId,
-                                    TipoValorId = C.TipoValorId,
-                                    UsuGraba = data.UsuGraba,
-                                    ValorMaximo = C.ValorMaximo,
-                                    ValorMinimo = C.ValorMinimo
-                                };
+                                    Componente Hijo = new Componente()
+                                    {
+                                        EsEliminado = NoEsEliminado,
+                                        FechaGraba = DateTime.UtcNow,
+                                        Nombre = C.Nombre,
+                                        PadreId = Padre.ComponenteId,
+                                        TipoValorId = C.TipoValorId,
+                                        UsuGraba = data.UsuGraba,
+                                        ValorMaximo = C.ValorMaximo,
+                                        ValorMinimo = C.ValorMinimo
+                                    };
 
-                                ctx.Componentes.Add(Hijo);
-                                ctx.SaveChanges();
-                                break;
-                            }
-                        case (int)Enumeradores.RecordStatus.Eliminar:
-                            {
-                                var Hijo = (from a in ctx.Componentes where a.ComponenteId == C.ComponenteId select a).FirstOrDefault();
+                                    ctx.Componentes.Add(Hijo);
+                                    ctx.SaveChanges();
+                                    break;
+                                }
+                            case (int)Enumeradores.RecordStatus.Eliminar:
+                                {
+                                    var Hijo = (from a in ctx.Componentes where a.ComponenteId == C.ComponenteId select a).FirstOrDefault();
 
-                                Hijo.EsEliminado = EsEliminado;
-                                Hijo.UsuActualiza = data.UsuGraba;
-                                Hijo.FechaActualiza = DateTime.UtcNow;
+                                    Hijo.EsEliminado = EsEliminado;
+                                    Hijo.UsuActualiza = data.UsuGraba;
+                                    Hijo.FechaActualiza = DateTime.UtcNow;
 
-                                ctx.SaveChanges();
-                                break;
-                            }
-                        case (int)Enumeradores.RecordStatus.Editar:
-                            {
-                                var Hijo = (from a in ctx.Componentes where a.ComponenteId == C.ComponenteId select a).FirstOrDefault();
+                                    ctx.SaveChanges();
+                                    break;
+                                }
+                            case (int)Enumeradores.RecordStatus.Editar:
+                                {
+                                    var Hijo = (from a in ctx.Componentes where a.ComponenteId == C.ComponenteId select a).FirstOrDefault();
 
-                                Hijo.UsuActualiza = data.UsuGraba;
-                                Hijo.FechaActualiza = DateTime.UtcNow;
-                                Hijo.Nombre = C.Nombre;
-                                Hijo.TipoValorId = C.TipoValorId;
-                                Hijo.ValorMaximo = C.ValorMaximo;
-                                Hijo.ValorMinimo = C.ValorMinimo;
+                                    Hijo.UsuActualiza = data.UsuGraba;
+                                    Hijo.FechaActualiza = DateTime.UtcNow;
+                                    Hijo.Nombre = C.Nombre;
+                                    Hijo.TipoValorId = C.TipoValorId;
+                                    Hijo.ValorMaximo = C.ValorMaximo;
+                                    Hijo.ValorMinimo = C.ValorMinimo;
 
-                                ctx.SaveChanges();
-                                break;
-                            }
+                                    ctx.SaveChanges();
+                                    break;
+                                }
+                        }
                     }
                 }
 

@@ -145,6 +145,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Seguimiento\EMOController.cs" />
     <Compile Include="Controllers\Seguimiento\PlanesDeVidaController.cs" />
+    <Compile Include="Controllers\Seguimiento\SeguimientoController.cs" />
     <Compile Include="Controllers\Seguridad\AccesoController.cs" />
     <Compile Include="Controllers\Seguridad\GeneralSecurityAttributeController.cs" />
     <Compile Include="Global.asax.cs">
@@ -400,6 +401,9 @@
     <Content Include="Views\Administracion\Proveedores.cshtml" />
     <Content Include="Views\Shared\_BandejaProveedoresPartial.cshtml" />
     <Content Include="Views\Administracion\CrearProveedor.cshtml" />
+    <Content Include="Views\EMO\CargarEMO.cshtml" />
+    <Content Include="Views\Seguimiento\Calendario.cshtml" />
+    <Content Include="Views\Shared\_BandejaCronogramaPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

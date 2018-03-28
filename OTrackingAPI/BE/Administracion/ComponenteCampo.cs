@@ -6,7 +6,7 @@ namespace BE.Administracion
     [Table("tblComponenteCampo")]
     public class ComponenteCampo
     {
-        public int Id { get; set; }
+        public int ComponenteCampoId { get; set; }
         public int ServicioComponenteId { get; set; }
         public int ComponenteId { get; set; }
         public string Valor { get; set; }

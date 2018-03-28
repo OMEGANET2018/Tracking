@@ -1,15 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BE.Administracion
+namespace BE.Seguimiento
 {
-    [Table("tblComponenteDiagnostico")]
-    public class ComponenteDiagnostico
+    [Table("tblSeguimiento")]
+    public class Seguimiento
     {
-        public int ComponenteDiagnosticoId { get; set; }
-        public int ServicioComponenteId { get; set; }
-        public string CIE10Id { get; set; }
-        public string Observacion { get; set; }
+        public int SeguimientoId { get; set; }
+        public int PersonaId { get; set; }
         public int EsEliminado { get; set; }
         public int? UsuGraba { get; set; }
         public DateTime? FechaGraba { get; set; }

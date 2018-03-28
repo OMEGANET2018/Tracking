@@ -83,3 +83,4 @@ E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\BL\obj\Debug\BL.csprojResolv
 E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\BL\obj\Debug\BL.csproj.CoreCompileInputs.cache
 E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\BL\obj\Debug\BL.dll
 E:\Projects\Omeganet\Tracking\Tracking\OTrackingAPI\BL\obj\Debug\BL.pdb
+F:\Proyectos\Tracking\OTrackingAPI\BL\obj\Debug\BL.csproj.CopyComplete
