@@ -30,3 +30,4 @@ F:\Proyectos\Tracking\OTrackingAPI\DAL\obj\Release\DAL.csprojResolveAssemblyRefe
 F:\Proyectos\Tracking\OTrackingAPI\DAL\obj\Release\DAL.csproj.CoreCompileInputs.cache
 F:\Proyectos\Tracking\OTrackingAPI\DAL\obj\Release\DAL.dll
 F:\Proyectos\Tracking\OTrackingAPI\DAL\obj\Release\DAL.pdb
+F:\Proyectos\Tracking\OTrackingAPI\DAL\obj\Release\DAL.csproj.CopyComplete

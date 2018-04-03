@@ -55,3 +55,4 @@ F:\Proyectos\Tracking\OTrackingAPI\BL\obj\Release\BL.csprojResolveAssemblyRefere
 F:\Proyectos\Tracking\OTrackingAPI\BL\obj\Release\BL.csproj.CoreCompileInputs.cache
 F:\Proyectos\Tracking\OTrackingAPI\BL\obj\Release\BL.dll
 F:\Proyectos\Tracking\OTrackingAPI\BL\obj\Release\BL.pdb
+F:\Proyectos\Tracking\OTrackingAPI\BL\obj\Release\BL.csproj.CopyComplete
