@@ -46,7 +46,10 @@
         <table class="table table-hover" id="TablaAExportar">
             <thead>
                 <tr>
+                    <th><input type="checkbox" onclick="checkAll(this)"/></th>
                     <th>Nombre</th>
+                    <th>Tipo Documento</th>
+                    <th>Nro Documento</th>
                     <th>Fecha</th>
                     <th>Tipo Seguimiento</th>
                     <th>Status Seguimiento</th>
@@ -66,12 +69,15 @@
                     {
                         foreach (OTracking.Models.Comun.BandejaSeguimientoDetalle item in ViewBag.Seguimiento.Lista)
                         {
-                            eventos += "{title: '" + item.Nombre + "', start: '" + item.Fecha.ToString("yyyy-MM-dd") + "', color: '" + item.Color + "'},";
-                            <tr>
-                                <td>@item.Nombre</td>
-                                <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
-                                <td>@item.TipoSeguimiento</td>
-                                <td style="font-weight:bolder;color:@item.Color">@item.StatusSeguimiento</td>
+                            eventos += "{title: '" + item.Nombre + "', start: '" + item.Fecha.ToString("yyyy-MM-dd") + "', color: '" + item.Color + "', SeguimientoId: " + item.SeguimientoId + "},";
+                            <tr id="@item.SeguimientoId">
+                                <td><input type="checkbox" onclick="SingleCheck()"/></td>
+                                <td id="menu">@item.Nombre</td>
+                                <td id="menu">@item.TipoDocumento</td>
+                                <td id="menu">@item.NroDocumento</td>
+                                <td id="menu">@item.Fecha.ToString("dd/MM/yyyy hh:mm tt")</td>
+                                <td id="menu">@item.TipoSeguimiento</td>
+                                <td id="menu" style="font-weight:bolder;color:@item.Color">@item.StatusSeguimiento</td>
                                 <td id="status" style="display:none">@item.StatusSeguimientoId</td>
                             </tr>
                         }
@@ -126,6 +132,9 @@
         $('#calendar').fullCalendar({
             locale: 'es',
             defaultDate: new Date(),
+            eventClick: function (calEvent, jsEvent, view) {
+                $("#TablaAExportar tbody").children("#" + calEvent.SeguimientoId).children("#menu").contextMenu({ x: jsEvent.pageX, y: jsEvent.pageY });
+            },
             header: {
                 left: 'prev,next today',
                 center: 'title',
@@ -137,29 +146,115 @@
         });
 
         $("#TablaAExportar tbody").contextMenu({
-            selector: 'tr',
+            selector: '#menu',
             trigger: 'left',
             hideOnSecondTrigger: true,
             items: {
                 "Confirmar": {
                     name: "Confirmar",
                     callback: function (itemKey, opt, rootMenu, originalEvent) {
-                        console.log(itemKey);
-                        console.log(opt);
-                        console.log(rootMenu);
-                        console.log(originalEvent);
+                        var data = { id: $(opt.$trigger).parent().attr("id") };
+
+                        var width = $(window).width();
+                        var height = $(window).height();
+                        $("#Loading").show().css("width", width + "px").css("height", height + "px");
+                        $("#Loading > img").css("margin-left", ((width - 200) / 2) + "px").css("margin-top", ((height - 266) / 2) + "px");
+
+                        $.ajax({
+                            cache: false,
+                            dataType: 'json',
+                            method: 'POST',
+                            data: data,
+                            url: '/Seguimiento/ConfirmarSeguimiento',
+                            success: function (json) {
+                                $("#Loading").hide();
+                                if (json) {
+                                    setTimeout(function () { alerta("Fecha Confirmada!", "verde") },1000);
+                                    Filtrar(@Index);
+                                } else {
+                                    alerta("No se pudo Confirmar la Fecha", "rojo");
+                                }
+
+                            },
+                            error: function (error) {
+                                alerta("Sucedió un error al conectarse al servidor", "rojo");
+                                $("#Loading").hide();
+                                console.log(error);
+                            }
+                        });
                     },
                     disabled: function (key, opt) {
-                        if ($(opt.$trigger).children("#status").html() == 1) {
+                        if ($(opt.$trigger).parent().children("#status").html() == 1) {
                             return false;
                         } else {
                             return true;
                         }
                     }
                 },
-                "Cambiar": { name: "Cambiar" },
-                "Adjuntar": { name: "Adjuntar" },
-                "Eliminar": { name: "Eliminar" },
+                "Cambiar": {
+                    name: "Cambiar",
+                    callback: function (itemKey, opt, rootMenu, originalEvent) {
+                        $("#ModalCambioFecha").modal();
+                        var margen = ($(window).height() / 2) - 200;
+                        $("#ModalCambioFecha .modal-content").css("margin-top", margen + "px");
+                        $("#ModalCambioFecha input").val("");
+                        $("#ModalCambioFecha #btnCambiar").attr("onclick", "ValidarCambiarFecha(" + $(opt.$trigger).parent().attr("id") + ")");
+                    },
+                    disabled: function (key, opt) {
+                        if ($(opt.$trigger).parent().children("#status").html() == 1 || $(opt.$trigger).parent().children("#status").html() == 2) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                },
+                "Adjuntar": {
+                    name: "Adjuntar",
+                    callback: function (itemKey, opt, rootMenu, originalEvent) {
+                        alert("adjuntando");
+                    },
+                    disabled: function (key, opt) {
+                        if ($(opt.$trigger).parent().children("#status").html() == 2) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                },
+                "Eliminar": {
+                    name: "Eliminar",
+                    callback: function (itemKey, opt, rootMenu, originalEvent) {
+                        var data = { id: $(opt.$trigger).parent().attr("id") };
+
+                        var width = $(window).width();
+                        var height = $(window).height();
+                        $("#Loading").show().css("width", width + "px").css("height", height + "px");
+                        $("#Loading > img").css("margin-left", ((width - 200) / 2) + "px").css("margin-top", ((height - 266) / 2) + "px");
+
+                        $.ajax({
+                            cache: false,
+                            dataType: 'json',
+                            method: 'POST',
+                            data: data,
+                            url: '/Seguimiento/EliminarSeguimiento',
+                            success: function (json) {
+                                $("#Loading").hide();
+                                if (json) {
+                                    setTimeout(function () { alerta("Fecha Eliminada!", "verde") }, 1000);
+                                    Filtrar(@Index);
+                                } else {
+                                    alerta("No se pudo Eliminar la Fecha", "rojo");
+                                }
+
+                            },
+                            error: function (error) {
+                                alerta("Sucedió un error al conectarse al servidor", "rojo");
+                                $("#Loading").hide();
+                                console.log(error);
+                            }
+                        });
+                    }
+                },
                 "sep1": "---------",
                 "Cerrar": {
                     name: "Cerrar",
@@ -167,6 +262,43 @@
                 }
             }
 
+        });
+    }
+
+    function CambiarFecha(id) {
+
+        var data = {
+            id: id,
+            fecha: $("#ModalCambioFecha input").val()
+        };
+
+        var width = $(window).width();
+        var height = $(window).height();
+        $("#Loading").show().css("width", width + "px").css("height", height + "px");
+        $("#Loading > img").css("margin-left", ((width - 200) / 2) + "px").css("margin-top", ((height - 266) / 2) + "px");
+
+        $.ajax({
+            cache: false,
+            dataType: 'json',
+            method: 'POST',
+            data: data,
+            url: '/Seguimiento/CambiarSeguimiento',
+            success: function (json) {
+                $("#Loading").hide();
+                if (json) {
+                    setTimeout(function () { alerta("Fecha Actualizada!", "verde") }, 1000);
+                    Filtrar(@Index);
+                    $("#ModalCambioFecha").modal("toggle");
+                } else {
+                    alerta("No se pudo Actualizar la Fecha", "rojo");
+                }
+
+            },
+            error: function (error) {
+                alerta("Sucedió un error al conectarse al servidor", "rojo");
+                $("#Loading").hide();
+                console.log(error);
+            }
         });
     }
 </script>

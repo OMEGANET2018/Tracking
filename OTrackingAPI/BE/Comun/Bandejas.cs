@@ -140,12 +140,16 @@ namespace BE.Comun
     public class BandejaSeguimiento : Bandejas
     {
         public string Nombre { get; set; }
+        public string NroDocumento { get; set; }
         public List<BandejaSeguimientoDetalle> Lista { get; set; }
     }
 
     public class BandejaSeguimientoDetalle
     {
+        public int SeguimientoId { get; set; }
         public string Nombre { get; set; }
+        public string TipoDocumento { get; set; }
+        public string NroDocumento { get; set; }
         public DateTime Fecha { get; set; }
         public int TipoSeguimientoId { get; set; }
         public string TipoSeguimiento { get; set; }

@@ -14,6 +14,7 @@ namespace BE.Persona
         public int? GradoInstruccionId { get; set; }
         public string PuestoLaboral { get; set; }
         public string Area { get; set; }
+        public int? RecibirCorreoDeArea { get; set; }
         public int? ZonaId { get; set; }
         public string LugarDeTrabajo { get; set; }
         public int? DiscapacitadoId { get; set; }

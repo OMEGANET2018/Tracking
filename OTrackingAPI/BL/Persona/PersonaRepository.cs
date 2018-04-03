@@ -110,7 +110,8 @@ namespace BL.Personas
                                 EsEliminado = NoEsEliminado,
                                 PersonaId = Persona.PersonaId,
                                 ZonaId = Row.GetCell(29) != null ? (int?)Row.GetCell(29).NumericCellValue : null,
-                                LugarDeTrabajo = Row.GetCell(30) != null ? Row.GetCell(30).ToString() : ""
+                                LugarDeTrabajo = Row.GetCell(30) != null ? Row.GetCell(30).ToString() : "",
+                                RecibirCorreoDeArea = Row.GetCell(31) != null ? (int?)Row.GetCell(31).NumericCellValue : null
                             };
 
                             Colaborador Colaborador = (from a in ctx.Colaboradores where a.PersonaId == Persona.PersonaId && a.EsEliminado == NoEsEliminado select a).FirstOrDefault();

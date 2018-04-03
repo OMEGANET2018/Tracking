@@ -30,6 +30,12 @@
             Si = 1
         }
 
+        public enum RecibirCorreoDeArea
+        {
+            No = 0,
+            Si = 1
+        }
+
         public enum RecordStatus
         {
             Grabado = 1,
@@ -66,7 +72,7 @@
             PorConfirmar = 1,
             Confirmado = 2,
             Atendido = 3,
-            Eliminado = 4
+            Vencido = 4
         }
     }
 }
