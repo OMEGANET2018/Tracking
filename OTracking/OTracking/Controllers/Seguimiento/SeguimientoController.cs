@@ -33,12 +33,12 @@ namespace OTracking.Controllers.Seguimiento
         }
 
         [GeneralSecurity(Rol = "Seguimiento-Seguimiento")]
-        public JsonResult ConfirmarSeguimiento(string id)
+        public JsonResult ConfirmarSeguimiento(int id)
         {
             Api API = new Api();
             Dictionary<string, string> arg = new Dictionary<string, string>()
             {
-                { "seguimientoId",id },
+                { "seguimientoId",id.ToString() },
                 { "UserId", ViewBag.USUARIO.UsuarioId.ToString() }
             };
             bool response = API.Get<bool>("Seguimiento/ConfirmarSeguimiento", arg);
@@ -46,12 +46,12 @@ namespace OTracking.Controllers.Seguimiento
         }
 
         [GeneralSecurity(Rol = "Seguimiento-Seguimiento")]
-        public JsonResult EliminarSeguimiento(string id)
+        public JsonResult EliminarSeguimiento(int id)
         {
             Api API = new Api();
             Dictionary<string, string> arg = new Dictionary<string, string>()
             {
-                { "seguimientoId",id },
+                { "seguimientoId",id.ToString() },
                 { "UserId", ViewBag.USUARIO.UsuarioId.ToString() }
             };
             bool response = API.Get<bool>("Seguimiento/EliminarSeguimiento", arg);
@@ -71,12 +71,12 @@ namespace OTracking.Controllers.Seguimiento
         }
 
         [GeneralSecurity(Rol = "Seguimiento-Seguimiento")]
-        public JsonResult CambiarSeguimiento(string id, string fecha)
+        public JsonResult CambiarSeguimiento(int id, string fecha)
         {
             Api API = new Api();
             Dictionary<string, string> arg = new Dictionary<string, string>()
             {
-                { "seguimientoId",id },
+                { "seguimientoId",id.ToString() },
                 { "fechaString", fecha },
                 { "UserId", ViewBag.USUARIO.UsuarioId.ToString() }
             };
@@ -85,17 +85,31 @@ namespace OTracking.Controllers.Seguimiento
         }
 
         [GeneralSecurity(Rol = "Seguimiento-Seguimiento")]
-        public JsonResult AdjuntarCita(string id, string archivo, string nombre)
+        public JsonResult AdjuntarCita(int id, string archivo, string nombre)
         {
             Api API = new Api();
             Dictionary<string, string> arg = new Dictionary<string, string>()
             {
                 { "String1", archivo },
                 { "String2", nombre },
-                { "Int1", id },
+                { "Int1", id.ToString() },
                 { "Int2", ViewBag.USUARIO.UsuarioId.ToString() }
             };
             bool response = API.Post<bool>("Seguimiento/AdjuntarCita", arg);
+            return Json(response);
+        }
+
+        [GeneralSecurity(Rol = "Seguimiento-Seguimiento")]
+        public JsonResult IngresarControl(int id, decimal input)
+        {
+            Api API = new Api();
+            Dictionary<string, string> arg = new Dictionary<string, string>()
+            {
+                { "seguimientoId", id.ToString() },
+                { "valorControl", input.ToString() },
+                { "UserId", ViewBag.USUARIO.UsuarioId.ToString() }
+            };
+            bool response = API.Get<bool>("Seguimiento/IngresarControl", arg);
             return Json(response);
         }
     }

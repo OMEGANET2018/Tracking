@@ -7,7 +7,8 @@ namespace BE.Seguimiento
     public class Seguimiento
     {
         public int SeguimientoId { get; set; }
-        public int PersonaId { get; set; }
+        public int ServicioId { get; set; }
+        public int ColaboradorId { get; set; }
         public DateTime Fecha { get; set; }
         public int TipoSeguimiento { get; set; }
         public int StatusSeguimiento { get; set; }

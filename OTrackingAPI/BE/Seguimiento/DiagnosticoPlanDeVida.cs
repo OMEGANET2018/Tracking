@@ -12,6 +12,7 @@ namespace BE.Seguimiento
         public int PlanesDeVidaId { get; set; }
         public string CIE10Id { get; set; }
         public string Diagnostico { get; set; }
+        public int? TipoControlId { get; set; }
         public string Control { get; set; }
         public int? ControlNumero { get; set; }
         public int? ControlNumeroTipoId { get; set; }

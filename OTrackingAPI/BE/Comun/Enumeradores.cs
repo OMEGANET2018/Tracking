@@ -20,7 +20,8 @@
             TipoValorComponente = 113,
             TipoTiempo = 114,
             TipoSeguimiento = 115,
-            StatusSeguimiento = 116
+            StatusSeguimiento = 116,
+            TipoControl = 117
         }
 
 

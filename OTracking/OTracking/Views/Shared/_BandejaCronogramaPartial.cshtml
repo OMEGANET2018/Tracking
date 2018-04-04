@@ -73,15 +73,16 @@
                             <tr id="@item.SeguimientoId">
                                 <td><input type="checkbox" onclick="SingleCheck()"/></td>
                                 <td id="menu" style="display:none;">Calendar</td>
-                                <td id="menu">@item.Nombre</td>
-                                <td id="menu">@item.TipoDocumento</td>
-                                <td id="menu">@item.NroDocumento</td>
-                                <td id="menu">@item.Fecha.ToString("dd/MM/yyyy hh:mm tt")</td>
-                                <td id="menu">@item.TipoSeguimiento</td>
-                                <td id="menu" style="font-weight:bolder;color:@item.Color">@item.StatusSeguimiento</td>
+                                <td id="menu" class="menuNombre">@item.Nombre</td>
+                                <td id="menu" class="menuTipoDocumento">@item.TipoDocumento</td>
+                                <td id="menu" class="menuNroDocumento">@item.NroDocumento</td>
+                                <td id="menu" class="menuFecha">@item.Fecha.ToString("dd/MM/yyyy hh:mm tt")</td>
+                                <td id="menu" class="menuTipo">@item.TipoSeguimiento</td>
+                                <td id="menu" class="menuStatus" style="font-weight:bolder;color:@item.Color">@item.StatusSeguimiento</td>
                                 <td id="status" style="display:none">@item.StatusSeguimientoId</td>
                                 <td id="tipo" style="display:none">@item.TipoSeguimientoId</td>
                                 <td id="menufecha" style="display:none">@item.Fecha.ToString("yyyy-MM-dd")</td>
+                                <td id="tipocontrol" style="display:none">@item.TipoControl</td>
                             </tr>
                         }
                     }
@@ -156,7 +157,16 @@
                 "Ver": {
                     name: "Ver",
                     callback: function (itemKey, opt, rootMenu, originalEvent) {
-
+                        $("#ModalVer").modal();
+                        var margen = ($(window).height() / 2) - 200;
+                        $("#ModalVer .modal-content").css("margin-top", margen + "px");
+                        $("#ModalVer #VerNombre span").html($(opt.$trigger).parent().children(".menuNombre").html());
+                        $("#ModalVer #VerTipoDocumento span").html($(opt.$trigger).parent().children(".menuTipoDocumento").html());
+                        $("#ModalVer #VerNroDocumento span").html($(opt.$trigger).parent().children(".menuNroDocumento").html());
+                        $("#ModalVer #VerFecha span").html($(opt.$trigger).parent().children(".menuFecha").html());
+                        $("#ModalVer #VerTipo span").html($(opt.$trigger).parent().children(".menuTipo").html());
+                        $("#ModalVer #VerStatus span").html($(opt.$trigger).parent().children(".menuStatus").html());
+                        $("#ModalVer #VerStatus span").attr("style", $(opt.$trigger).parent().children(".menuStatus").attr("style"));
                     },
                     visible: function (key, opt) {
                         if ($(opt.$trigger).html() == "Calendar") {
@@ -228,17 +238,20 @@
                     name: "Atender",
                     callback: function (itemKey, opt, rootMenu, originalEvent) {
                         if ($(opt.$trigger).parent().children("#tipo").html() == 1) {
+                            // CASO DE CITA -> ADJUNTAR
                             $("#ModalAdjuntar").modal();
                             var margen = ($(window).height() / 2) - 200;
                             $("#ModalAdjuntar .modal-content").css("margin-top", margen + "px");
                             $("#ModalAdjuntar input").val("");
                             $("#ModalAdjuntar #btnAceptar").attr("onclick", "ValidarAdjuntarCita(" + $(opt.$trigger).parent().attr("id") + ")");
-                        } else if ($(opt.$trigger).parent().children("#tipo").html() == 2){
+                        } else if ($(opt.$trigger).parent().children("#tipo").html() == 2) {
+                            // CASO DE CONTROL -> Ingresar
                             $("#ModalControl").modal();
                             var margen = ($(window).height() / 2) - 200;
+                            $("#ModalControl .modal-title").html("Control de " + $(opt.$trigger).parent().children("#tipocontrol").html());
                             $("#ModalControl .modal-content").css("margin-top", margen + "px");
                             $("#ModalControl input").val("");
-                            $("#ModalControl #btnAceptar").attr("onclick", "ValidarAdjuntarCita(" + $(opt.$trigger).parent().attr("id") + ")");
+                            $("#ModalControl #btnAceptar").attr("onclick", "ValidarIngresarControl(" + $(opt.$trigger).parent().attr("id") + ")");
                         }
                     },
                     disabled: function (key, opt) {
@@ -360,6 +373,42 @@
                     $("#ModalAdjuntar").modal("toggle");
                 } else {
                     alerta("No se pudo Atender la Cita", "rojo");
+                }
+
+            },
+            error: function (error) {
+                alerta("Sucedió un error al conectarse al servidor", "rojo");
+                $("#Loading").hide();
+                console.log(error);
+            }
+        });
+    }
+
+    function IngresarControl(id,input) {
+        var data = {
+            id: id,
+            input: input
+        };
+
+        var width = $(window).width();
+        var height = $(window).height();
+        $("#Loading").show().css("width", width + "px").css("height", height + "px");
+        $("#Loading > img").css("margin-left", ((width - 200) / 2) + "px").css("margin-top", ((height - 266) / 2) + "px");
+
+        $.ajax({
+            cache: false,
+            dataType: 'json',
+            method: 'POST',
+            data: data,
+            url: '/Seguimiento/IngresarControl',
+            success: function (json) {
+                $("#Loading").hide();
+                if (json) {
+                    setTimeout(function () { alerta("Control Atendido!", "verde") }, 1000);
+                    Filtrar(@Index);
+                    $("#ModalControl").modal("toggle");
+                } else {
+                    alerta("No se pudo Atender el Control", "rojo");
                 }
 
             },

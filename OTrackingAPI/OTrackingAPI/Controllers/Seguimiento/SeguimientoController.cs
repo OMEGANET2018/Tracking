@@ -57,5 +57,12 @@ namespace OTrackingAPI.Controllers.Seguimiento
             bool response = SR.AdjuntarCita(data.Int1, data.String1, data.String2, data.Int2, LocalPath);
             return Ok(response);
         }
+
+        [HttpGet]
+        public IHttpActionResult IngresarControl(int seguimientoId, int valorControl, int UserId)
+        {
+            bool response = SR.IngresarControl(seguimientoId, valorControl, UserId);
+            return Ok(response);
+        }
     }
 }

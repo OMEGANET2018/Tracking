@@ -1396,9 +1396,10 @@ namespace BL.Seguimiento
                                             Fecha = FechaParaElControl,
                                             FechaGraba = DateTime.UtcNow,
                                             UsuGraba = 0,
-                                            PersonaId = persona.PersonaId,
+                                            ColaboradorId = colaborador.ColaboradorId,
                                             StatusSeguimiento = (int)Enumeradores.StatusSeguimiento.PorConfirmar,
-                                            TipoSeguimiento = (int)Enumeradores.TipoSeguimiento.Control
+                                            TipoSeguimiento = (int)Enumeradores.TipoSeguimiento.Control,
+                                            ServicioId = servicio.ServicioId
                                         };
                                         ctx.Seguimientos.Add(seguimiento);
                                         ctx.SaveChanges();
@@ -1409,7 +1410,8 @@ namespace BL.Seguimiento
                                             EsEliminado = NoEsEliminado,
                                             FechaGraba = DateTime.UtcNow,
                                             UsuGraba = 0,
-                                            SeguimientoId = seguimiento.SeguimientoId
+                                            SeguimientoId = seguimiento.SeguimientoId,
+                                            TipoControlId = D.TipoControlId
                                         };
                                         ctx.DiagnosticosSeguimiento.Add(DxSeguimiento);
                                         ctx.SaveChanges();
@@ -1448,9 +1450,10 @@ namespace BL.Seguimiento
                                             Fecha = FechaParaElControl,
                                             FechaGraba = DateTime.UtcNow,
                                             UsuGraba = 0,
-                                            PersonaId = persona.PersonaId,
+                                            ColaboradorId = colaborador.ColaboradorId,
                                             StatusSeguimiento = (int)Enumeradores.StatusSeguimiento.PorConfirmar,
-                                            TipoSeguimiento = (int)Enumeradores.TipoSeguimiento.Consulta
+                                            TipoSeguimiento = (int)Enumeradores.TipoSeguimiento.Consulta,
+                                            ServicioId = servicio.ServicioId
                                         };
                                         ctx.Seguimientos.Add(seguimiento);
                                         ctx.SaveChanges();

@@ -1,5 +1,6 @@
 ﻿using DAL;
 using BE.Comun;
+using BE.Administracion;
 using System;
 using System.Linq;
 using System.Globalization;
@@ -22,6 +23,7 @@ namespace BL.Seguimiento
                 int grupoTipoSeguimiento = (int)Enumeradores.GrupoParametros.TipoSeguimiento;
                 int grupoStatusSeguimiento = (int)Enumeradores.GrupoParametros.StatusSeguimiento;
                 int grupoTipoDocumento = (int)Enumeradores.GrupoParametros.TipoDocumentos;
+                int grupoTipoControl = (int)Enumeradores.GrupoParametros.TipoControl;
                 string Nombre = string.IsNullOrWhiteSpace(data.Nombre) ? "" : data.Nombre;
                 string NroDocumento = string.IsNullOrWhiteSpace(data.NroDocumento) ? "" : data.NroDocumento;
                 int skip = (data.Index - 1) * data.Take;
@@ -47,10 +49,14 @@ namespace BL.Seguimiento
 
 
                 var Lista = (from a in ctx.Seguimientos
-                             join c in ctx.Personas on a.PersonaId equals c.PersonaId
+                             join y in ctx.DiagnosticosSeguimiento on a.SeguimientoId equals y.SeguimientoId
+                             join z in ctx.Colaboradores on a.ColaboradorId equals z.ColaboradorId
+                             join c in ctx.Personas on z.PersonaId equals c.PersonaId
                              join d in ctx.Parametros on new {a = grupoTipoSeguimiento, b = a.TipoSeguimiento} equals new {a = d.GrupoId, b = d.ParametroId}
                              join e in ctx.Parametros on new { a = grupoStatusSeguimiento, b = a.StatusSeguimiento } equals new { a = e.GrupoId, b = e.ParametroId }
                              join f in ctx.Parametros on new { a = grupoTipoDocumento, b = c.TipoDocumentoId } equals new { a = f.GrupoId, b = f.ParametroId }
+                             join t in ctx.Parametros on new { a = grupoTipoControl, b = y.TipoControlId } equals new { a = t.GrupoId, b = (int?)t.ParametroId } into TP
+                             from p in TP.DefaultIfEmpty()
                              where
                              (a.EsEliminado == NoEliminado && c.EsEliminado == NoEliminado) &&
                              (c.Nombres + " " + c.ApellidoPaterno + " " + c.ApellidoMaterno).Contains(Nombre) &&
@@ -66,7 +72,8 @@ namespace BL.Seguimiento
                                 TipoSeguimiento = d.Valor1,
                                 StatusSeguimientoId = a.StatusSeguimiento,
                                 StatusSeguimiento = e.Valor1,
-                                Color = e.Valor2
+                                Color = e.Valor2,
+                                TipoControl = p.Valor1
                              }).ToList();
 
                 foreach (var L in Lista)
@@ -173,14 +180,15 @@ namespace BL.Seguimiento
                 string CorreoHost = (from a in parametros where a.ParametroId == parametroHost select a.Valor2).FirstOrDefault();
 
                 var Data = (from a in ctx.Seguimientos
-                            join b in ctx.Personas on a.PersonaId equals b.PersonaId
+                            join z in ctx.Colaboradores on a.ColaboradorId equals z.ColaboradorId
+                            join b in ctx.Personas on z.PersonaId equals b.PersonaId
                             join c in ctx.Colaboradores on b.PersonaId equals c.PersonaId
                             where 
                             (a.EsEliminado == NoEliminado && b.EsEliminado == NoEliminado && c.EsEliminado == NoEliminado) &&
                             SeguimientoIdList.Contains(a.SeguimientoId)
                             select new { a,b,c }).ToList();
 
-                var ListadoPersonas = Data.GroupBy(x => x.a.PersonaId).Select(x => new {
+                var ListadoPersonas = Data.GroupBy(x => x.b.PersonaId).Select(x => new {
                                                 PersonaID = x.Key,
                                                 x.FirstOrDefault().b.Correo,
                                                 x.FirstOrDefault().c.Area,
@@ -295,6 +303,61 @@ namespace BL.Seguimiento
                 File.WriteAllBytes(PathAndFileName, Convert.FromBase64String(archivoBase64));
 
                 return true;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
+
+        public bool IngresarControl(int seguimientoId, int valorControl, int UserId)
+        {
+            try
+            {
+                int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
+                int grupoTipoControl = (int)Enumeradores.GrupoParametros.TipoControl;
+
+                var Seguimiento = (from a in ctx.Seguimientos where a.EsEliminado == NoEsEliminado && a.SeguimientoId == seguimientoId select a).FirstOrDefault();
+                if (Seguimiento == null)
+                    return false;
+
+                var DiagnosticoSeguimiento = (from a in ctx.DiagnosticosSeguimiento where a.EsEliminado == NoEsEliminado && a.SeguimientoId == Seguimiento.SeguimientoId select a).FirstOrDefault();
+                if (DiagnosticoSeguimiento == null)
+                    return false;
+
+                var TipoControl = (from a in ctx.Parametros where a.EsEliminado == NoEsEliminado && a.GrupoId == grupoTipoControl && a.ParametroId == DiagnosticoSeguimiento.TipoControlId select a).FirstOrDefault();
+                if (TipoControl == null)
+                    return false;
+
+                var componenteId = (from a in ctx.Componentes where a.EsEliminado == NoEsEliminado && a.Nombre == TipoControl.Valor1 select a.ComponenteId).FirstOrDefault();
+
+                var ComponenteCampo = (from a in ctx.ComponenteCampos
+                                       join b in ctx.ServicioComponentes on a.ServicioComponenteId equals b.ServicioComponenteId
+                                       join c in ctx.Servicios on b.ServicioId equals c.ServicioId
+                                       where 
+                                       a.EsEliminado == NoEsEliminado &&
+                                       b.EsEliminado == NoEsEliminado &&
+                                       c.EsEliminado == NoEsEliminado &&
+                                       c.ServicioId == Seguimiento.ServicioId &&
+                                       a.ComponenteId == componenteId &&
+                                       c.ColaboradorId == Seguimiento.ColaboradorId
+                                       select a).FirstOrDefault();
+
+
+                ComponenteCampo CC = new ComponenteCampo()
+                {
+                    ComponenteId = componenteId,
+                    EsEliminado = NoEsEliminado,
+                    FechaGraba = DateTime.UtcNow,
+                    ServicioComponenteId = ComponenteCampo.ServicioComponenteId,
+                    UsuGraba = UserId,
+                    Valor = valorControl.ToString()
+                };
+
+                ctx.ComponenteCampos.Add(CC);
+                int rows = ctx.SaveChanges();
+
+                return rows > 0;
             }
             catch(Exception e)
             {

@@ -151,6 +151,7 @@ namespace OTracking.Models.Comun
         public string TipoDocumento { get; set; }
         public string NroDocumento { get; set; }
         public DateTime Fecha { get; set; }
+        public string TipoControl { get; set; }
         public int TipoSeguimientoId { get; set; }
         public string TipoSeguimiento { get; set; }
         public int StatusSeguimientoId { get; set; }
