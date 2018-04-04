@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BE;
+using System.IO;
 
 namespace BL.Seguimiento
 {
@@ -70,7 +71,7 @@ namespace BL.Seguimiento
 
                 foreach (var L in Lista)
                 {
-                    L.Fecha = DateTime.Parse(L.Fecha.ToString("yyyy-MM-ddThh:mm:ss"),CultureInfo.CurrentCulture,DateTimeStyles.AssumeUniversal);
+                    L.Fecha = DateTime.Parse(L.Fecha.ToString("yyyy-MM-ddTHH:mm:ss"),CultureInfo.CurrentCulture,DateTimeStyles.AssumeUniversal);
                 }
 
                 int TotalRegistros = Lista.Count;
@@ -258,6 +259,42 @@ namespace BL.Seguimiento
                 int row = ctx.SaveChanges();
 
                 return row > 0;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
+
+        public bool AdjuntarCita(int seguimientoId, string archivoBase64, string nombreArchivo, int UserId, string FilePath)
+        {
+            try
+            {
+                int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
+                int StatusAtendido = (int)Enumeradores.StatusSeguimiento.Atendido;
+
+                var Seguimiento = (from a in ctx.Seguimientos where
+                                   a.EsEliminado == NoEsEliminado &&
+                                   a.SeguimientoId == seguimientoId
+                                   select a).FirstOrDefault();
+
+                if (Seguimiento == null)
+                    return false;
+
+                Seguimiento.StatusSeguimiento = StatusAtendido;
+                Seguimiento.FechaActualiza = DateTime.UtcNow;
+                Seguimiento.UsuActualiza = UserId;
+
+                ctx.SaveChanges();
+
+                string extension = "." + nombreArchivo.Split('.')[nombreArchivo.Split('.').Length - 1];
+
+                nombreArchivo = "\\" + Seguimiento.Fecha.ToString("ddMMyyyy") + Seguimiento.SeguimientoId.ToString() + extension;
+
+                string PathAndFileName = FilePath + nombreArchivo;
+                File.WriteAllBytes(PathAndFileName, Convert.FromBase64String(archivoBase64));
+
+                return true;
             }
             catch(Exception e)
             {

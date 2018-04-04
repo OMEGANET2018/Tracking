@@ -69,11 +69,57 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body" style="text-align:center;">
-                <p><input type="datetime-local" style="height:40px;" onclick="$('#ModalCambioFecha #error').html('')"/></p>
+                <p><input type="datetime-local" style="height:40px;" onclick="$('#ModalCambioFecha #error').html('')" /></p>
                 <p><span id="error" style="color:red;"></span></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-info boton form-control" style="cursor:pointer;" id="btnCambiar">Cambiar</button>
+                <button type="button" class="btn-info boton form-control" data-dismiss="modal" style="cursor:pointer;">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Adjuntar -->
+<div id="ModalAdjuntar" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Adjuntar</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <p><input type="file" id="inputAdjuntar" onchange="GetBase64(this)" style="height:40px;" /></p>
+                <p><span id="error" style="color:red;"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-info boton form-control" style="cursor:pointer;" id="btnAceptar">Adjuntar</button>
+                <button type="button" class="btn-info boton form-control" data-dismiss="modal" style="cursor:pointer;">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Control -->
+<div id="ModalControl" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Control</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <p><input type="text" onclick="$('#ModalControl #error').html('')" style="height:40px;" /></p>
+                <p><span id="error" style="color:red;"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-info boton form-control" style="cursor:pointer;" id="btnAceptar">Guardar</button>
                 <button type="button" class="btn-info boton form-control" data-dismiss="modal" style="cursor:pointer;">Cerrar</button>
             </div>
         </div>
@@ -101,6 +147,7 @@
     <script src="~/Scripts/jquery.ui.position.js"></script>
 
     <script>
+        var Base64File = "";
         $(document).ready(function () {
             Init();
         });
@@ -238,6 +285,35 @@
 
             if (valido)
                 CambiarFecha(id);
+        }
+
+        function ValidarAdjuntarCita(id) {
+            var valido = true;
+            if ($("#ModalAdjuntar input").val() == "") {
+                $("#ModalAdjuntar #error").html("Tiene que ingresar un Archivo");
+                valido = false;
+            }
+
+            if (Base64File == undefined || Base64File == "") {
+                $("#ModalAdjuntar #error").html("El archivo ingresado no es válido.");
+                valido = false;
+            }
+
+            if (valido)
+                AdjuntarCita(id, Base64File, document.getElementById("inputAdjuntar").files[0].name);
+        }
+
+        function GetBase64(X) {
+            $("#ModalAdjuntar #error").html("");
+
+            var file = X.files[0];
+
+            var reader = new FileReader();
+            reader.onload = function () {
+                Base64File = reader.result.split("base64,")[1];
+            };
+
+            reader.readAsDataURL(file);
         }
     </script>
 }

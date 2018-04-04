@@ -3,6 +3,7 @@ using BE.Comun;
 using System.Web.Http;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Web.Hosting;
 
 namespace OTrackingAPI.Controllers.Seguimiento
 {
@@ -44,6 +45,16 @@ namespace OTrackingAPI.Controllers.Seguimiento
         public IHttpActionResult CambiarSeguimiento(int seguimientoId, string fechaString, int UserId)
         {
             bool response = SR.CambiarSeguimiento(seguimientoId, fechaString, UserId);
+            return Ok(response);
+        }
+
+        [HttpPost]
+        public IHttpActionResult AdjuntarCita (MultiDataModel data)
+        {
+            string FolderPath = System.Web.Configuration.WebConfigurationManager.AppSettings["ArchivosConsulta"].ToString();
+            string LocalPath = HostingEnvironment.MapPath(FolderPath);
+
+            bool response = SR.AdjuntarCita(data.Int1, data.String1, data.String2, data.Int2, LocalPath);
             return Ok(response);
         }
     }

@@ -83,5 +83,20 @@ namespace OTracking.Controllers.Seguimiento
             bool response = API.Get<bool>("Seguimiento/CambiarSeguimiento", arg);
             return Json(response);
         }
+
+        [GeneralSecurity(Rol = "Seguimiento-Seguimiento")]
+        public JsonResult AdjuntarCita(string id, string archivo, string nombre)
+        {
+            Api API = new Api();
+            Dictionary<string, string> arg = new Dictionary<string, string>()
+            {
+                { "String1", archivo },
+                { "String2", nombre },
+                { "Int1", id },
+                { "Int2", ViewBag.USUARIO.UsuarioId.ToString() }
+            };
+            bool response = API.Post<bool>("Seguimiento/AdjuntarCita", arg);
+            return Json(response);
+        }
     }
 }
