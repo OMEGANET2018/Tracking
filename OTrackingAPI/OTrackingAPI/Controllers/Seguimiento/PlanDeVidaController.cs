@@ -25,6 +25,13 @@ namespace OTrackingAPI.Controllers.Seguimiento
             return Ok(result);
         }
 
+        [HttpGet]
+        public IHttpActionResult ObtenerTipoControl()
+        {
+            List<Dropdownlist> result = PR.ObtenerTipoControl();
+            return Ok(result);
+        }
+
         [HttpPost]
         public IHttpActionResult GuardarCambiosPlanDeVida(MultiDataModel data)
         {

@@ -30,8 +30,10 @@ namespace BL.Seguimiento
             try
             {
                 int grupoTipoTiempo = (int)Enumeradores.GrupoParametros.TipoTiempo;
+                int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
+
                 List<Dropdownlist> result = (from a in ctx.Parametros
-                                             where a.GrupoId == grupoTipoTiempo
+                                             where a.GrupoId == grupoTipoTiempo && a.EsEliminado == NoEsEliminado
                                              select new Dropdownlist()
                                              {
                                                  Id = a.ParametroId,
@@ -41,6 +43,29 @@ namespace BL.Seguimiento
                 return result;
             }
             catch(Exception e)
+            {
+                return null;
+            }
+        }
+
+        public List<Dropdownlist> ObtenerTipoControl()
+        {
+            try
+            {
+                int grupoTipoControl = (int)Enumeradores.GrupoParametros.TipoControl;
+                int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
+
+                List<Dropdownlist> result = (from a in ctx.Parametros
+                                             where a.GrupoId == grupoTipoControl && a.EsEliminado == NoEsEliminado
+                                             select new Dropdownlist()
+                                             {
+                                                 Id = a.ParametroId,
+                                                 Value = a.Valor1
+                                             }).ToList();
+
+                return result;
+            }
+            catch (Exception e)
             {
                 return null;
             }
@@ -108,7 +133,8 @@ namespace BL.Seguimiento
                         ControlRepeticion = Hijo.ControlRepeticion,
                         ControlRepeticionTipoId = Hijo.ControlRepeticionTipoId,
                         Diagnostico = Hijo.Diagnostico,
-                        PlanesDeVidaId = PDV.PlanesDeVidaId
+                        PlanesDeVidaId = PDV.PlanesDeVidaId,
+                        TipoControlId = Hijo.TipoControlId
                     };
 
                     ctx.DiagnosticoPlanesDeVida.Add(DPDV);
@@ -224,7 +250,8 @@ namespace BL.Seguimiento
                                     ControlRepeticion = Hijo.ControlRepeticion,
                                     ControlRepeticionTipoId = Hijo.ControlRepeticionTipoId,
                                     Diagnostico = Hijo.Diagnostico,
-                                    PlanesDeVidaId = PDV.PlanesDeVidaId
+                                    PlanesDeVidaId = PDV.PlanesDeVidaId,
+                                    TipoControlId = Hijo.TipoControlId
                                 };
 
                                 ctx.DiagnosticoPlanesDeVida.Add(DPDV);
@@ -255,6 +282,7 @@ namespace BL.Seguimiento
                                 DPDV.ControlRepeticion = Hijo.ControlRepeticion;
                                 DPDV.ControlRepeticionTipoId = Hijo.ControlRepeticionTipoId;
                                 DPDV.Diagnostico = Hijo.Diagnostico;
+                                DPDV.TipoControlId = Hijo.TipoControlId;
 
                                 ctx.SaveChanges();
                                 break;
@@ -417,7 +445,8 @@ namespace BL.Seguimiento
                                          ControlRepeticionTipoId = a.ControlRepeticionTipoId,
                                          Diagnostico = a.Diagnostico,
                                          DiagnosticoId = a.DiagnosticoPlanesDeVidaId,
-                                         StatusId = RecordStatusGrabado
+                                         StatusId = RecordStatusGrabado,
+                                         TipoControlId = a.TipoControlId
                                      }).ToList();
 
                 data.Citas = (from a in ctx.CitaPlanesDeVida

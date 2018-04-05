@@ -29,6 +29,7 @@ namespace OTracking.Controllers.Seguimiento
         {
             Api API = new Api();
             ViewBag.TipoTiempo = Utils.Utils.LoadDropDownList(API.Get<List<Dropdownlist>>("PlanDeVida/ObtenerTipoTiempo"),Constantes.Select);
+            ViewBag.TipoControl = Utils.Utils.LoadDropDownList(API.Get<List<Dropdownlist>>("PlanDeVida/ObtenerTipoControl"), Constantes.Select);
 
             Dictionary<string, string> arg = new Dictionary<string, string>();
 

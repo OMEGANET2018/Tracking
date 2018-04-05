@@ -100,6 +100,7 @@ namespace OTracking.Models.Comun
         public int DiagnosticoId { get; set; }
         public string CIE10 { get; set; }
         public string Diagnostico { get; set; }
+        public int? TipoControlId { get; set; }
         public string Control { get; set; }
         public int? ControlNumero { get; set; }
         public int? ControlNumeroTipoId { get; set; }

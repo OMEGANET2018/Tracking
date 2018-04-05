@@ -197,6 +197,7 @@
                                                             <td style="display:none;"><input type="text" id="diagnostico-Repeticion" value="@(D.ControlRepeticion.HasValue ? D.ControlRepeticion.Value.ToString() : "")" /></td>
                                                             <td style="display:none;"><input type="text" id="diagnostico-RepeticionTipoId" value="@(D.ControlRepeticionTipoId.HasValue ? D.ControlRepeticionTipoId.Value.ToString() : "")" /></td>
                                                             <td style="display:none;"><input type="text" id="diagnostico-status" value="@D.StatusId" /></td>
+                                                            <td style="display:none;"><input type="text" id="diagnostico-TipoControlId" value="@D.TipoControlId"></td>
                                                         </tr>
                                                     }
                                                 }
@@ -294,7 +295,8 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <div><div style="width:80px;margin-left:30px;">Control de:</div><div><input type="text" id="tipoControl" onkeydown="$(this).css('border-color','initial')"/></div></div>
+                <div id="casoCita"><div style="width:80px;margin-left:30px;">Consulta al:</div><div><input type="text" id="tipoControl" onkeydown="$(this).css('border-color','initial')"/></div></div>
+                <div id="casoControl"><div style="width:80px;margin-left:30px;">Control de:</div><div><select id="tipoControlId" onchange="$(this).css('border-color','initial')">@{if (ViewBag.TipoControl != null) { foreach (var T in ViewBag.TipoControl) {<option value="@T.Id">@T.Value</option> } } }</select></div></div>
                 <div><div style="width:80px;margin-left:30px;">Cada:</div><div><input type="number" id="inputCada" onkeydown="$(this).css('border-color','initial')"/><select id="select1" onchange="$(this).css('border-color','initial')">@{if (ViewBag.TipoTiempo != null) { foreach (OTracking.Models.Comun.Dropdownlist T in ViewBag.TipoTiempo) {<option value="@T.Id">@T.Value</option> } } }</select></div></div>
                 <div><div style="width:80px;margin-left:30px;">Durante:</div><div><input type="number" id="inputDurante" onkeydown="$(this).css('border-color','initial')"/><select id="select2" onchange="$(this).css('border-color','initial')">@{if (ViewBag.TipoTiempo != null) { foreach (OTracking.Models.Comun.Dropdownlist T in ViewBag.TipoTiempo) {<option value="@T.Id">@T.Value</option> } } }</select></div></div>
             </div>
@@ -328,6 +330,7 @@
             <td style="display:none;"><input type="text" id="diagnostico-Repeticion" value="0" /></td>
             <td style="display:none;"><input type="text" id="diagnostico-RepeticionTipoId" value="0" /></td>
             <td style="display:none;"><input type="text" id="diagnostico-status" value="2" /></td>
+            <td style="display:none;"><input type="text" id="diagnostico-TipoControlId" value="0"></td>
         </tr>
     </tbody>
 </table>
@@ -431,7 +434,8 @@
                     ControlNumeroTipoId: $($("#tabla-diagnosticos tbody tr")[i]).children().children("#diagnostico-NumeroTipoId").val(),
                     ControlRepeticion: $($("#tabla-diagnosticos tbody tr")[i]).children().children("#diagnostico-Repeticion").val(),
                     ControlRepeticionTipoId: $($("#tabla-diagnosticos tbody tr")[i]).children().children("#diagnostico-RepeticionTipoId").val(),
-                    StatusId: $($("#tabla-diagnosticos tbody tr")[i]).children().children("#diagnostico-status").val()
+                    StatusId: $($("#tabla-diagnosticos tbody tr")[i]).children().children("#diagnostico-status").val(),
+                    TipoControlId: $($("#tabla-diagnosticos tbody tr")[i]).children().children("#diagnostico-TipoControlId").val()
                 };
 
                 Data.Diagnosticos.push(Dx);
@@ -529,6 +533,8 @@
             temp = campo;
             $("#myModal").modal();
             $("#myModal .modal-title").html("Editar Control");
+            $("#myModal #casoCita").hide();
+            $("#myModal #casoControl").show();
             $("#myModal select").val(-1);
             $("#myModal input").val("");
             $("#PopupAceptar").attr("onclick", "InsertarControl()");
@@ -536,8 +542,8 @@
 
         function InsertarControl() {
             var valid = true;
-            if ($("#myModal #tipoControl").val().trim() == "") {
-                $("#myModal #tipoControl").css("border-color", "red");
+            if ($("#myModal #tipoControlId").val() == -1) {
+                $("#myModal #tipoControlId").css("border-color", "red");
                 valid = false;
             }
             if ($("#myModal #inputCada").val().trim() == "") {
@@ -558,12 +564,13 @@
             }
 
             if (valid) {
-                $(temp).parent().parent().children("#DxControl").html("Control de " + $("#myModal #tipoControl").val() + " cada " + $("#myModal #inputCada").val() + " " + $("#myModal #select1 option:selected").html() + " durante " + $("#myModal #inputDurante").val() + " " + $("#myModal #select2 option:selected").html());
+                $(temp).parent().parent().children("#DxControl").html("Control de " + $("#myModal #tipoControlId option:selected").html() + " cada " + $("#myModal #inputCada").val() + " " + $("#myModal #select1 option:selected").html() + " durante " + $("#myModal #inputDurante").val() + " " + $("#myModal #select2 option:selected").html());
                 $("#myModal").modal("toggle");
                 $(temp).parent().parent().children().children("#diagnostico-Numero").val($("#myModal #inputCada").val());
                 $(temp).parent().parent().children().children("#diagnostico-NumeroTipoId").val($("#myModal #select1").val());
                 $(temp).parent().parent().children().children("#diagnostico-Repeticion").val($("#myModal #inputDurante").val());
                 $(temp).parent().parent().children().children("#diagnostico-RepeticionTipoId").val($("#myModal #select2").val());
+                $(temp).parent().parent().children().children("#diagnostico-TipoControlId").val($("#myModal #tipoControlId").val());
                 if ($(temp).parent().parent().children().children("#diagnostico-status").val() == 1)
                     $(temp).parent().parent().children().children("#diagnostico-status").val(3);
             }
@@ -590,6 +597,8 @@
             temp = campo;
             $("#myModal").modal();
             $("#myModal .modal-title").html("Editar Cita");
+            $("#myModal #casoCita").show();
+            $("#myModal #casoControl").hide();
             $("#myModal select").val(-1);
             $("#myModal input").val("");
             $("#PopupAceptar").attr("onclick", "InsertarCita()");
