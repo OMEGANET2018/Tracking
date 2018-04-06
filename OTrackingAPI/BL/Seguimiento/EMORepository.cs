@@ -996,7 +996,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(87).StringCellValue,
+                                CIE10Id = Row.GetCell(87).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(88)?.StringCellValue,
@@ -1107,7 +1107,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(96).StringCellValue,
+                                CIE10Id = Row.GetCell(96).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(97)?.StringCellValue,
@@ -1120,7 +1120,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(99).StringCellValue,
+                                CIE10Id = Row.GetCell(99).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(100)?.StringCellValue,
@@ -1133,7 +1133,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(102).StringCellValue,
+                                CIE10Id = Row.GetCell(102).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(103)?.StringCellValue,
@@ -1146,7 +1146,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(105).StringCellValue,
+                                CIE10Id = Row.GetCell(105).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(106)?.StringCellValue,
@@ -1196,7 +1196,7 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(109).StringCellValue,
+                                CIE10Id = Row.GetCell(109).ToString(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 Observacion = Row.GetCell(110)?.StringCellValue,

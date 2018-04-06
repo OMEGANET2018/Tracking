@@ -71,5 +71,12 @@ namespace OTrackingAPI.Controllers.Seguimiento
             BandejaServicios result = SR.FiltrarServicios(data);
             return Ok(result);
         }
+
+        [HttpGet]
+        public IHttpActionResult ObtenerListadoTipoSeguimiento()
+        {
+            List<Dropdownlist> result = SR.ObtenerListadoTipoSeguimiento();
+            return Ok(result);
+        }
     }
 }

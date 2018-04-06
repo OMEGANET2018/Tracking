@@ -404,5 +404,28 @@ namespace BL.Seguimiento
                 return null;
             }
         }
+
+        public List<Dropdownlist> ObtenerListadoTipoSeguimiento()
+        {
+            try
+            {
+                int grupoTipoSeguimiento = (int)Enumeradores.GrupoParametros.TipoSeguimiento;
+                int NoEsEliminado = (int)Enumeradores.EsEliminado.No;
+
+                List<Dropdownlist> result = (from a in ctx.Parametros
+                                             where a.GrupoId == grupoTipoSeguimiento && a.EsEliminado == NoEsEliminado
+                                             select new Dropdownlist()
+                                             {
+                                                 Id = a.ParametroId,
+                                                 Value = a.Valor1
+                                             }).ToList();
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
     }
 }

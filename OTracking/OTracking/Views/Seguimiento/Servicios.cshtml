@@ -14,6 +14,24 @@
     .pagination-active span {
         color: #f39c12 !important;
     }
+
+    #myModal .col-5, #myModal .col-7 {
+        display: inline-block;
+        margin: 10px 0px;
+    }
+
+    #myModal input, #myModal select{
+        width:230px;
+        height:40px;
+    }
+
+    #myModal .modal-body button{
+        width: 50px;
+        display:inline-block;
+        padding:8px 0px;
+        margin-left:10px;
+        cursor:pointer;
+    }
 </style>
 <div class="container-fluid">
     <div class="box box-default mt-2" id="acordion">
@@ -57,6 +75,40 @@
     </nav>*@
 </div>
 
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Agendar Seguimiento</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+      <div class="modal-body">
+        <div><div class="col-5">Tipo de Seguimeinto: </div><div class="col-7"><select id="TipoSeguimiento" onchange="CambioTipoSeguimiento(this); $(this).css('border-color','initial')">@{if (ViewBag.TipoSeguimeinto != null) { foreach (var T in ViewBag.TipoSeguimeinto) { <option value="@T.Id">@T.Value</option>} } }</select></div></div>
+        <div><div class="col-5">Fecha: </div><div class="col-7"><input id="FechaSeguimiento" onclick="$(this).css('border-color','initial')" type="datetime-local" /></div></div>
+        <div id="divTipoControl"><div class="col-5">Tipo de Control: </div><div class="col-7"><select id="ControlSeguimiento" onchange="$(this).css('border-color','initial')">@{if (ViewBag.TipoControl != null) { foreach (var T in ViewBag.TipoControl) { <option value="@T.Id">@T.Value</option>} } }</select></div></div>
+        <div><div class="col-5">CIE10: </div><div class="col-7"><input id="CIE10" type="text" style="width:170px;" onkeyup="ObtenerDx(this); $(this).css('border-color','initial')"/><button type="button" class="btn-info boton form-control icon-plus" onclick="ValidarCIE10()"></button></div></div>
+        <div style="padding:10px 25px 0px 15px;"><textarea readonly style="width:100%" id="DxDescripcion"></textarea></div>
+        <div>
+            <table class="table table-hover" style="width:100%;">
+                <thead>
+                    <tr><th>Descripción</th><th>Eliminar</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" style="cursor:pointer;" class="btn-info boton form-control" onclick="ValidarAgendar()">Aceptar</button>
+          <button type="button" style="cursor:pointer;" class="btn-info boton form-control" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div class="alert" role="alert" style="display:none;">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
     <span></span>
@@ -67,6 +119,7 @@
 </div>
 
 <script>
+    var xhr = null;
     function ColapsarFiltro(id) {
         setTimeout(function () {
             var height = 10;
@@ -128,5 +181,122 @@
                 console.log(error);
             }
         });
+    }
+
+    function AgendarPopup() {
+        $("#myModal").modal();
+        $("#myModal select").val(-1);
+        $("#myModal input").val("");
+        $("#myModal #divTipoControl").hide();
+    }
+
+    function CambioTipoSeguimiento(input) {
+        $("#myModal table tbody").html("");
+
+        if ($(input).val() == 2) {
+            $("#myModal #divTipoControl").show();
+            $("#myModal #divTipoControl select").css('border-color', 'initial').val(-1);
+        } else{
+            $("#myModal #divTipoControl").hide();
+        }
+    }
+
+    function ValidarAgendar() {
+        var valid = true;
+
+        if ($("#myModal #TipoSeguimiento").val() == -1) {
+            $("#myModal #TipoSeguimiento").css('border-color', 'red');
+            valid = false;
+        }
+
+        if ($("#myModal #FechaSeguimiento").val() == "") {
+            $("#myModal #FechaSeguimiento").css("border-color", "red");
+            valid = false;
+        } else if (moment($("#FechaSeguimiento").val())._d < new Date()) {
+            $("#myModal #FechaSeguimiento").css("border-color", "red");
+            valid = false;
+        }
+
+        if ($("#myModal #TipoSeguimiento").val() == 2) {
+            if ($("#myModal #ControlSeguimiento").val() == -1) {
+                $("#myModal #ControlSeguimiento").css("border-color", "red");
+                valid = false;
+            }
+        }
+
+        if ($("#myModal table tbody").html() == "") {
+            $("#CIE10").css("border-color", "red");
+            valid = false;
+        }
+
+        if (valid)
+            Agendar();
+    }
+
+    function Agendar() {
+        var data = {
+
+        }
+
+        alert("agendando");
+    }
+
+    function ValidarCIE10() {
+        var valid = true;
+
+        if ($("#myModal #TipoSeguimiento").val() == -1) {
+            $("#myModal #TipoSeguimiento").css('border-color', 'red');
+            valid = false;
+        }
+
+        if ($("#DxDescripcion").html() == "") {
+            $("#CIE10").css("border-color", "red");
+            valid = false;
+        }
+
+        if ($("#myModal table tbody:contains('" + $("#CIE10").val() + "')").length > 0) {
+            $("#CIE10").css("border-color", "red");
+            valid = false;
+        }
+
+        if (valid)
+            InsertarCIE10();
+    }
+
+    function InsertarCIE10() {
+        $("#CIE10").css("border-color", "initial");
+
+        if ($("#myModal #TipoSeguimiento").val() == 2) {
+            $("#myModal table tbody").html("");
+        }
+
+        $("#myModal table tbody").append("<tr><td>" + $("#CIE10").val() + "</td><td onclick='Eliminar(this)'><i class='icon-trash'></i></td></tr>");
+    }
+
+    function Eliminar(item) {
+        $(item).parent().remove();
+    }
+
+    function ObtenerDx(input) {
+        if ($(input).val().trim().length > 0) {
+            if (xhr && xhr.readyState != 4)
+                xhr.abort();
+
+            xhr = $.ajax({
+                cache: false,
+                dataType: 'json',
+                method: 'POST',
+                data: { data: $(input).val().trim() },
+                url: "/PlanesDeVida/ObtenerDxConCIE10",
+                success: function (json) {
+                    $("#DxDescripcion").html(json);
+                },
+                error: function () {
+                    $("#DxDescripcion").html("");
+                }
+            });
+        } else {
+            $("#DxDescripcion").html("");
+        }
     }
 </script>

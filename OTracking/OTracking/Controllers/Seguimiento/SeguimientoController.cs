@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using OTracking.Models;
 using Newtonsoft.Json;
 using System;
+using OTracking.Utils;
 
 namespace OTracking.Controllers.Seguimiento
 {
@@ -116,7 +117,10 @@ namespace OTracking.Controllers.Seguimiento
         [GeneralSecurity(Rol = "Seguimiento-Servicios")]
         public ActionResult Servicios()
         {
+            Api API = new Api();
             ViewBag.Servicios = new BandejaServicios() { Lista = new List<BandejaServiciosDetalle>(), Take = 10};
+            ViewBag.TipoSeguimeinto = Utils.Utils.LoadDropDownList(API.Get<List<Dropdownlist>>("Seguimiento/ObtenerListadoTipoSeguimiento"), Constantes.Select);
+            ViewBag.TipoControl = Utils.Utils.LoadDropDownList(API.Get<List<Dropdownlist>>("PlanDeVida/ObtenerTipoControl"), Constantes.Select);
             return View();
         }
 
