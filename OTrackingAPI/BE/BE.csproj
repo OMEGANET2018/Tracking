@@ -51,7 +51,6 @@
     <Compile Include="Administracion\Componente.cs" />
     <Compile Include="Administracion\ComponenteCampo.cs" />
     <Compile Include="Administracion\ComponenteDiagnostico.cs" />
-    <Compile Include="Administracion\Diagnostico.cs" />
     <Compile Include="Acceso\Menu.cs" />
     <Compile Include="Comun\Parametro.cs" />
     <Compile Include="Acceso\Perfil.cs" />

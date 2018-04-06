@@ -364,5 +364,45 @@ namespace BL.Seguimiento
                 return false;
             }
         }
+
+        public BandejaServicios FiltrarServicios(BandejaServicios data)
+        {
+            try
+            {
+                int NoEliminado = (int)Enumeradores.EsEliminado.No;
+                int grupoTipoDocumento = (int)Enumeradores.GrupoParametros.TipoDocumentos;
+                string Nombre = string.IsNullOrWhiteSpace(data.Nombre) ? "" : data.Nombre;
+                string NroDocumento = string.IsNullOrWhiteSpace(data.NroDocumento) ? "" : data.NroDocumento;
+                int skip = (data.Index - 1) * data.Take;
+
+                var Lista = (from a in ctx.Servicios
+                             join b in ctx.Colaboradores on a.ColaboradorId equals b.ColaboradorId
+                             join c in ctx.Personas on b.PersonaId equals c.PersonaId
+                             join d in ctx.Parametros on new { a = grupoTipoDocumento, b = c.TipoDocumentoId } equals new { a = d.GrupoId, b = d.ParametroId }
+                             where 
+                             (a.EsEliminado == NoEliminado && b.EsEliminado == NoEliminado && c.EsEliminado == NoEliminado)
+                             select new BandejaServiciosDetalle()
+                             {
+                                 Nombre = c.Nombres + " " + c.ApellidoPaterno + " " + c.ApellidoMaterno,
+                                 NroDocumento = c.NroDocumento,
+                                 TipoDocumento = d.Valor1,
+                                 ServicioId = a.ServicioId
+                             }).ToList();
+
+                int TotalRegistros = Lista.Count;
+
+                if (data.Take > 0)
+                    Lista = Lista.Skip(skip).Take(data.Take).ToList();
+
+                data.TotalRegistros = TotalRegistros;
+                data.Lista = Lista;
+
+                return data;
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+        }
     }
 }

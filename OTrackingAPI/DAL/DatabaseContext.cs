@@ -13,7 +13,6 @@ namespace DAL
         public DbSet<Persona> Personas  { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Colaborador> Colaboradores { get; set; }
-        public DbSet<Diagnostico> Diagnosticos { get; set; }
         public DbSet<Servicio> Servicios { get; set; }
         public DbSet<Componente> Componentes { get; set; }
         public DbSet<ComponenteDiagnostico> ComponenteDiagnosticos { get; set; }

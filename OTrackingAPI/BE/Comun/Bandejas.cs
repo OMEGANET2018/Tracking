@@ -159,4 +159,19 @@ namespace BE.Comun
         public string StatusSeguimiento { get; set; }
         public string Color { get; set; }
     }
+
+    public class BandejaServicios : Bandejas
+    {
+        public string Nombre { get; set; }
+        public string NroDocumento { get; set; }
+        public List<BandejaServiciosDetalle> Lista { get; set; }
+    }
+
+    public class BandejaServiciosDetalle
+    {
+        public int ServicioId { get; set; }
+        public string Nombre { get; set; }
+        public string TipoDocumento { get; set; }
+        public string NroDocumento { get; set; }
+    }
 }

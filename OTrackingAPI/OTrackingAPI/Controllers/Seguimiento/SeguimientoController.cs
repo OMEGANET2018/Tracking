@@ -64,5 +64,12 @@ namespace OTrackingAPI.Controllers.Seguimiento
             bool response = SR.IngresarControl(seguimientoId, valorControl, UserId);
             return Ok(response);
         }
+
+        [HttpPost]
+        public IHttpActionResult FiltrarServicios(BandejaServicios data)
+        {
+            BandejaServicios result = SR.FiltrarServicios(data);
+            return Ok(result);
+        }
     }
 }

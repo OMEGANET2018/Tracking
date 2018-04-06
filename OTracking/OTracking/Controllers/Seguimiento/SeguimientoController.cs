@@ -112,5 +112,27 @@ namespace OTracking.Controllers.Seguimiento
             bool response = API.Get<bool>("Seguimiento/IngresarControl", arg);
             return Json(response);
         }
+
+        [GeneralSecurity(Rol = "Seguimiento-Servicios")]
+        public ActionResult Servicios()
+        {
+            ViewBag.Servicios = new BandejaServicios() { Lista = new List<BandejaServiciosDetalle>(), Take = 10};
+            return View();
+        }
+
+        [GeneralSecurity(Rol = "Seguimiento-Servicios")]
+        public ActionResult FiltrarServicios(BandejaServicios data)
+        {
+            Api API = new Api();
+            Dictionary<string, string> arg = new Dictionary<string, string>()
+            {
+                { "Nombre",data.Nombre },
+                { "NroDocumento", data.NroDocumento},
+                { "Index", data.Index.ToString()},
+                { "Take", data.Take.ToString()}
+            };
+            ViewBag.Servicios = API.Post<BandejaServicios>("Seguimiento/FiltrarServicios", arg);
+            return PartialView("_BandejaServiciosPartial");
+        }
     }
 }

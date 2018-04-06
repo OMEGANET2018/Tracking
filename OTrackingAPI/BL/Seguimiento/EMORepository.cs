@@ -284,7 +284,7 @@ namespace BL.Seguimiento
 
                 IWorkbook book = new XSSFWorkbook(stream);
                 ISheet Sheet = book.GetSheet("EMO");
-                int index = 6;
+                int index = 5;
 
                 var empresas = (from a in ctx.Empresas where a.EsEliminado == NoEsEliminado select a).ToList();
                 var componentesPadres = (from a in ctx.Componentes where a.EsEliminado == NoEsEliminado && a.PadreId == 0 select a).ToList();
@@ -496,10 +496,10 @@ namespace BL.Seguimiento
 
                             ComponenteDiagnostico CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(36).ToString(),
+                                CIE10Id = Row.GetCell(36).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(37)?.ToString(),
+                                Observacion = Row.GetCell(37)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -509,10 +509,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(42).ToString(),
+                                CIE10Id = Row.GetCell(42).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(43)?.ToString(),
+                                Observacion = Row.GetCell(43)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -522,10 +522,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(45).ToString(),
+                                CIE10Id = Row.GetCell(45).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(46)?.ToString(),
+                                Observacion = Row.GetCell(46)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -656,10 +656,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(57).ToString(),
+                                CIE10Id = Row.GetCell(57).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(58)?.ToString(),
+                                Observacion = Row.GetCell(58)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -669,10 +669,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(59).ToString(),
+                                CIE10Id = Row.GetCell(59).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(60)?.ToString(),
+                                Observacion = Row.GetCell(60)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -682,10 +682,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(62).ToString(),
+                                CIE10Id = Row.GetCell(62).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(63)?.ToString(),
+                                Observacion = Row.GetCell(63)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -697,7 +697,7 @@ namespace BL.Seguimiento
                             #region Audiometria
                             SC = new ServicioComponente()
                             {
-                                ComponenteId = componentesPadres.Where(x => x.Nombre == "Audiometria").Select(x => x.ComponenteId).FirstOrDefault(),
+                                ComponenteId = componentesPadres.Where(x => x.Nombre == "Audiometría").Select(x => x.ComponenteId).FirstOrDefault(),
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
                                 UsuGraba = 0,
@@ -996,10 +996,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(87).ToString(),
+                                CIE10Id = Row.GetCell(87).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(88)?.ToString(),
+                                Observacion = Row.GetCell(88)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -1009,10 +1009,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(89).ToString(),
+                                CIE10Id = Row.GetCell(89).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(90)?.ToString(),
+                                Observacion = Row.GetCell(90)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -1107,10 +1107,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(96).ToString(),
+                                CIE10Id = Row.GetCell(96).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(97)?.ToString(),
+                                Observacion = Row.GetCell(97)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -1120,10 +1120,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(99).ToString(),
+                                CIE10Id = Row.GetCell(99).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(100)?.ToString(),
+                                Observacion = Row.GetCell(100)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -1133,10 +1133,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(102).ToString(),
+                                CIE10Id = Row.GetCell(102).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(103)?.ToString(),
+                                Observacion = Row.GetCell(103)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -1146,10 +1146,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(105).ToString(),
+                                CIE10Id = Row.GetCell(105).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(106)?.ToString(),
+                                Observacion = Row.GetCell(106)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -1196,10 +1196,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(109).ToString(),
+                                CIE10Id = Row.GetCell(109).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(110)?.ToString(),
+                                Observacion = Row.GetCell(110)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -1222,10 +1222,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(111).ToString(),
+                                CIE10Id = Row.GetCell(111).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(112)?.ToString(),
+                                Observacion = Row.GetCell(112)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -1235,10 +1235,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(113).ToString(),
+                                CIE10Id = Row.GetCell(113).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(114)?.ToString(),
+                                Observacion = Row.GetCell(114)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -1261,10 +1261,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(115).ToString(),
+                                CIE10Id = Row.GetCell(115).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(116)?.ToString(),
+                                Observacion = Row.GetCell(116)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -1287,10 +1287,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(117).ToString(),
+                                CIE10Id = Row.GetCell(117).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(118)?.ToString(),
+                                Observacion = Row.GetCell(118)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -1313,10 +1313,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(119).ToString(),
+                                CIE10Id = Row.GetCell(119).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(120)?.ToString(),
+                                Observacion = Row.GetCell(120)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
@@ -1339,10 +1339,10 @@ namespace BL.Seguimiento
 
                             CD = new ComponenteDiagnostico()
                             {
-                                CIE10Id = Row.GetCell(121).ToString(),
+                                CIE10Id = Row.GetCell(121).StringCellValue,
                                 EsEliminado = NoEsEliminado,
                                 FechaGraba = DateTime.UtcNow,
-                                Observacion = Row.GetCell(122)?.ToString(),
+                                Observacion = Row.GetCell(122)?.StringCellValue,
                                 ServicioComponenteId = SC.ServicioComponenteId,
                                 UsuGraba = 0
                             };
